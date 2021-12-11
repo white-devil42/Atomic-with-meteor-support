@@ -1,0 +1,170 @@
+/*
+ * This file is part of the atomic client distribution.
+ * Copyright (c) 2021-2021 0x150.
+ */
+
+plugins {
+    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'maven-publish'
+}
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+minecraft {
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+    maven { url 'https://jitpack.io' }
+}
+
+def excludedFiles(Collection<File> files) {
+    List<String> classes = new ArrayList<>()
+    files.each { file ->
+        if (file.isDirectory()) {
+            excludedFiles(Arrays.asList(file.listFiles()))
+        } else {
+            if (file.text.contains("@NonPublic") && file.text.contains("import me.zeroX150.atomic.helper.NonPublic")) {
+                classes += file.getName()
+            }
+        }
+    }
+    return classes
+}
+//def dep(dependency) {
+//	implementation(dependency)
+//	include(dependency)
+//}
+configurations {
+    impl
+}
+dependencies {
+
+    //to change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+
+    // seedcracker api
+    implementation(include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:e09c8bed96d233d53c6bf726252bed8be0c796cc')) { transitive = false }
+    // discord rpc
+    impl("club.minnced:java-discord-rpc:2.0.1")
+
+    // imgui
+    impl('io.github.spair:imgui-java-binding:1.82.2')
+    impl('io.github.spair:imgui-java-lwjgl3:1.82.2') {
+        exclude group: "org.lwjgl"
+    }
+    ["linux", "linux-x86", "macos", "windows", "windows-x86"].each {
+        impl("io.github.spair:imgui-java-natives-$it:1.82.2")
+    }
+
+    // custom dep handler
+    configurations.impl.dependencies.each {
+        implementation(group: it.group, name: it.name, version: it.version)
+        include(group: it.group, name: it.name, version: it.version)
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+// if it is present.
+// If you remove this task, sources will not be generated.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+task execBuild(dependsOn: build) {
+    if (project.isPrivate != "true") {
+        List<String> v = excludedFiles(sourceSets.main.allSource.files)
+        if (!v.isEmpty()) {
+            throw new IllegalStateException("Non-public features are present in:\n  " + String.join("\n  ", v) + "\n")
+        }
+    }
+    doLast {
+        String filename = "./builds/atomic"
+        if (project.isPrivate == "true") {
+            filename += "-private"
+        }
+
+        // clear build folder
+        File builds = new File("./builds")
+        for (File f : builds.listFiles()) {
+            f.delete()
+        }
+        //builds.mkdir()
+
+        filename += "_b"
+        File versionFile = new File("./src/main/resources/VERSION")
+        // store it in resources so its available to be used in game too
+        String currentVersion = versionFile.text
+        filename += currentVersion + ".jar"
+        file("./build/libs/atomic-1.0.0.jar").renameTo(file(filename))
+        Integer versionNum = currentVersion as Integer
+        versionNum = versionNum + 1
+        versionFile.write(versionNum + "")
+    }
+}
+
+jar {
+    from "LICENSE"
+    /*from {
+        configurations.include.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }*/
+    manifest {
+        attributes(
+                "Main-Class": "me.zeroX150.atomic.Main"
+        )
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(jar) {
+                builtBy remapJar
+            }
+            artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
+}
