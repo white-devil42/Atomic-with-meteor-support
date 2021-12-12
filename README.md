@@ -1,21 +1,10 @@
 ![image](https://media.discordapp.net/attachments/396663973006540802/886686297140363315/logo.png)
 
-A 1.18 ([1.17 version here](https://github.com/0x151/Atomic/tree/c58cad3209ea17ebff915c32a31bca8aa21c081f/builds)) fabric mod with useful features for enforcing the [Minecraft commercial use guidelines](https://account.mojang.com/documents/commercial_guidelines#:~:text=sell%20entitlements%20that%20affect%20gameplay)
-on certian Minecraft servers.
-
-## Why?
-
-This is the sequel to [cornos](https://cornos.cf), but ported to 1.18, with a new look and functionality. Cornos became
-a bit stale, so I decided to start this.
-
-## Support
-
-0x150 the 2nd#0194<br>
-Discord server: https://discord.gg/f2mAAz5pHF
+Atomic 1.18 but it supports meteor
 
 ## Downloading
 
-You can download this from the `builds` folder. There is only one file in there, so i dont think you can download the wrong thing. Download and drag
+You can download this from the `client` folder. There is only one file in there, so i dont think you can download the wrong thing. Download and drag
 into your 1.18+ mods folder to use.
 
 ## Installation
