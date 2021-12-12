@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "atomic",
+  "version": "1.0.0",
+  "name": "Atomic client",
+  "description": "based client for 1.18",
+  "authors": [
+    "0x150"
+  ],
+  "contributors": [],
+  "contact": {
+    "homepage": "https://0x150.cf/",
+    "sources": "https://github.com/cornos/Atomic"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/atomic/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.zeroX150.atomic.Atomic"
+    ],
+    "client": [],
+    "server": [],
+    "seedcrackerx": [
+      "me.zeroX150.atomic.feature.module.impl.render.oreSim.SeedCrackerEP"
+    ]
+  },
+  "mixins": [
+    "atomic.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": ">=0.40.1+1.17"
+  }
+}
