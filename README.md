@@ -4,7 +4,7 @@ Atomic 1.18 but it supports meteor
 
 ## Downloading
 
-You can download this from the `build` folder. There is only one file in there, so i dont think you can download the wrong thing. Download and drag
+You can download this from [releases](https://github.com/white-devil42/Atomic-with-meteor-support/releases). Download and drag
 into your 1.18+ mods folder to use.
 
 ## Installation
