@@ -9,7 +9,6 @@ import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.impl.movement.Jesus;
 import me.zeroX150.atomic.feature.module.impl.movement.NoPush;
-import me.zeroX150.atomic.feature.module.impl.render.FreeLook;
 import me.zeroX150.atomic.helper.manager.AttackManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -56,11 +55,4 @@ import java.util.Objects;
         }
     }
     
-
-    @Redirect(method = "jump", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.getYaw()F")) private float atomic_overwriteFreelookYaw(LivingEntity instance) {
-        if (instance.equals(Atomic.client.player) && ModuleRegistry.getByClass(FreeLook.class).isEnabled()) {
-            return ModuleRegistry.getByClass(FreeLook.class).newyaw;
-        }
-        return instance.getYaw();
-    }
 }

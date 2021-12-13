@@ -8,7 +8,6 @@ package me.zeroX150.atomic.mixin.game.render;
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.module.Module;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
-import me.zeroX150.atomic.feature.module.impl.render.FreeLook;
 import me.zeroX150.atomic.feature.module.impl.render.NoRender;
 import me.zeroX150.atomic.feature.module.impl.render.Zoom;
 import me.zeroX150.atomic.helper.render.Renderer;

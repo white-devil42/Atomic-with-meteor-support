@@ -2,6 +2,7 @@
 .gradle/
 out/
 classes/
+build/
 
 #IDEA
 .idea/

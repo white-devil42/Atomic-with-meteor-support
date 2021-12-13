@@ -85,7 +85,6 @@ import me.zeroX150.atomic.feature.module.impl.render.CommandBlockPreview;
 import me.zeroX150.atomic.feature.module.impl.render.ESP;
 import me.zeroX150.atomic.feature.module.impl.render.EntityFullbright;
 import me.zeroX150.atomic.feature.module.impl.render.EntitySpawnInfo;
-import me.zeroX150.atomic.feature.module.impl.render.FreeLook;
 import me.zeroX150.atomic.feature.module.impl.render.Freecam;
 import me.zeroX150.atomic.feature.module.impl.render.Fullbright;
 import me.zeroX150.atomic.feature.module.impl.render.Hud;
@@ -202,7 +201,6 @@ public class ModuleRegistry {
         modules.add(new AutoCone());
         modules.add(new CleanGUI());
         modules.add(new Timer());
-        modules.add(new FreeLook());
         modules.add(new ClickNuke());
         modules.add(new MassFillNuke());
         modules.add(new AutoTool());

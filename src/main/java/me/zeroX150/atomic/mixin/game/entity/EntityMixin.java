@@ -10,7 +10,6 @@ import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.impl.movement.IgnoreWorldBorder;
 import me.zeroX150.atomic.feature.module.impl.movement.Squake;
 import me.zeroX150.atomic.feature.module.impl.render.ESP;
-import me.zeroX150.atomic.feature.module.impl.render.FreeLook;
 import me.zeroX150.atomic.helper.squake.QuakeClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Box;
@@ -67,9 +66,5 @@ import java.util.Objects;
         if (QuakeClientPlayer.updateVelocity((Entity) (Object) this, movementInput, movementSpeed)) {
             info.cancel();
         }
-    }
-
-    @Redirect(method = "updateVelocity", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.getYaw()F")) float atomic_overwriteFreelookYaw(Entity instance) {
-        return instance.equals(Atomic.client.player) && ModuleRegistry.getByClass(FreeLook.class).isEnabled() ? ModuleRegistry.getByClass(FreeLook.class).newyaw : instance.getYaw();
     }
 }
