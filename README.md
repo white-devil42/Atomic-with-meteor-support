@@ -7,6 +7,9 @@ Atomic 1.18 but it supports meteor
 You can download this from [releases](https://github.com/white-devil42/Atomic-with-meteor-support/releases). Download and drag
 into your 1.18+ mods folder to use.
 
+## Important
+First you will have to start minecraft without meteor and change click gui from right shift to any other key
+
 ## Installation
 
 ### GNU/Linux <!--on top-->
