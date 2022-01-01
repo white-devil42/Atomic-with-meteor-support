@@ -61,10 +61,9 @@ public class Killaura extends Module {
     final BooleanValue confuseAllowClip        = (BooleanValue) this.config.create("Move into solid", false).description("Allow confuse to tp into block");
     final BooleanValue attackOnlyCombatPartner = (BooleanValue) this.config.create("Attack combat", true).description("Whether or not to only attack the combat partner (if in combat)");
     final BooleanValue ignoreFriends           = (BooleanValue) this.config.create("Ignore friends", true).description("Whether or not to ignore friends");
-
+    final Timer        delayExec               = new Timer();
     Entity       combatPartner;
     double       circleProg = 0;
-    Timer        delayExec  = new Timer();
     List<Entity> attacks    = new ArrayList<>();
 
     public Killaura() {

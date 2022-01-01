@@ -16,7 +16,7 @@ import java.util.List;
 
 public class WindowScreen extends Screen implements FastTickable {
 
-    protected List<Window> windows = new ArrayList<>();
+    protected final List<Window> windows = new ArrayList<>();
 
     public WindowScreen(String name) {
         super(Text.of(name));
@@ -28,10 +28,6 @@ public class WindowScreen extends Screen implements FastTickable {
 
     public void addWindow(Window window) {
         windows.add(window);
-    }
-
-    @Override protected void init() {
-        super.init();
     }
 
     @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -63,9 +59,6 @@ public class WindowScreen extends Screen implements FastTickable {
             windows.remove(selected);
             windows.add(0, selected); // push to front
         }
-        /*if (!windows.isEmpty()) {
-            windows.get(0).mouseClicked(mouseX, mouseY, button);
-        }*/
         return super.mouseClicked(mouseX, mouseY, button);
     }
 

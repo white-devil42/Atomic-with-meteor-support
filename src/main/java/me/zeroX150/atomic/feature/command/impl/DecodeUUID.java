@@ -19,9 +19,16 @@ public class DecodeUUID extends Command {
         super("DecodeUUID", "Decodes a UUID to its 4 integers", "decodeuuid", "duuid", "dcuuid");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"(UUID)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
-            Utils.Client.sendMessage("No uuid given");
+            error("No uuid given");
             return;
         }
         try {
@@ -30,11 +37,11 @@ public class DecodeUUID extends Command {
             for (int i : Utils.Players.decodeUUID(u)) {
                 decoded.add(i + "");
             }
-            Utils.Client.sendMessage("Decoded UUID split into their bits: " + String.join(", ", decoded));
-            Utils.Client.sendMessage("Copied to clipboard");
+            message("Decoded UUID split into their bits: " + String.join(", ", decoded));
+            success("Copied to clipboard");
             Atomic.client.keyboard.setClipboard("[I;" + String.join(",", decoded) + "]");
         } catch (Exception ignored) {
-            Utils.Client.sendMessage("Invalid UUID");
+            error("Invalid UUID");
         }
     }
 }

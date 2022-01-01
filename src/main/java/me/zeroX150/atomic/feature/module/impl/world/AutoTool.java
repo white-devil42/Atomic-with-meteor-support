@@ -42,7 +42,7 @@ public class AutoTool extends Module {
             Atomic.client.player.getInventory().selectedSlot = index;
         } else {
             if (optAirIndex != -1) {
-                Atomic.client.player.getInventory().selectedSlot = optAirIndex; // to prevent tools from getting damaged by accident, switch to air if we didnt find anything
+                Atomic.client.player.getInventory().selectedSlot = optAirIndex; // to prevent tools from getting damaged by accident, switch to air if we didn't find anything
             }
         }
     }

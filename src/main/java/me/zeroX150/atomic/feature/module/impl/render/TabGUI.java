@@ -29,19 +29,18 @@ import java.util.Map;
 
 public class TabGUI extends Module {
 
-    public static final double mheight = 12;
-    /*final double x       = 5;
-    final double y       = 5;*/ boolean expanded = false;
-    int                       selectedModule        = 0;
-    double                    trackedSelectedModule = 0;
-    int                       fixedSelected         = 0;
-    double                    aprog                 = 0;
-    double                    anim                  = 0;
-    double                    mwidth                = 60;
-    int                       selected              = 0;
-    double                    trackedSelected       = 0;
-    Map<ModuleType, Double[]> animProg              = new HashMap<>();
-    Map<Module, Double[]>     bruh                  = new HashMap<>();
+    public static final double                    mheight  = 12;
+    final               Map<ModuleType, Double[]> animProg = new HashMap<>();
+    final               Map<Module, Double[]>     bruh     = new HashMap<>();
+    boolean expanded              = false;
+    int     selectedModule        = 0;
+    double  trackedSelectedModule = 0;
+    int     fixedSelected         = 0;
+    double  aprog                 = 0;
+    double  anim                  = 0;
+    double  mwidth                = 60;
+    int     selected              = 0;
+    double  trackedSelected       = 0;
 
     public TabGUI() {
         super("TabGUI", "Renders a small module manager top left", ModuleType.RENDER);
@@ -98,7 +97,7 @@ public class TabGUI extends Module {
 
     public static ModuleType[] getModulesForDisplay() {
         return Arrays.stream(ModuleType.values()).filter(moduleType -> moduleType != ModuleType.HIDDEN)
-                .sorted(Comparator.comparingDouble(value -> -FontRenderers.normal.getStringWidth(value.getName()))).toArray(ModuleType[]::new);
+                .sorted(Comparator.comparingDouble(value -> -FontRenderers.getNormal().getStringWidth(value.getName()))).toArray(ModuleType[]::new);
     }
 
     int clampRevert(int n, int max) {
@@ -160,7 +159,7 @@ public class TabGUI extends Module {
     public void render(MatrixStack stack, double x, double y) {
         Color bg = new Color(0, 0, 0, 255);
         Color active = Utils.getCurrentRGB();
-        mwidth = 6 + FontRenderers.normal.getStringWidth(getModulesForDisplay()[0].getName()) + 20; // types sorted, so 0 will be the longest
+        mwidth = 6 + FontRenderers.getNormal().getStringWidth(getModulesForDisplay()[0].getName()) + 20; // types sorted, so 0 will be the longest
         double yOffset = 0;
         int index = 0;
         Renderer.R2D.fill(stack, bg, x, y, x + mwidth, y + (mheight * getModulesForDisplay().length));
@@ -177,8 +176,8 @@ public class TabGUI extends Module {
             } else {
                 animProg.getOrDefault(value, new Double[]{0d, 0d})[0] = 0d;
             }
-            FontRenderers.normal.drawString(stack, value.getName(), x + MathHelper.lerp(animProg.getOrDefault(value, new Double[]{0d,
-                    0d})[1], 2, mwidth / 2f - FontRenderers.normal.getStringWidth(value.getName()) / 2f), y + yOffset + (mheight - FontRenderers.normal.getFontHeight()) / 2f, c);
+            FontRenderers.getNormal().drawString(stack, value.getName(), x + MathHelper.lerp(animProg.getOrDefault(value, new Double[]{0d, 0d})[1], 2, mwidth / 2f - FontRenderers.getNormal()
+                    .getStringWidth(value.getName()) / 2f), y + yOffset + (mheight - FontRenderers.getNormal().getFontHeight()) / 2f, c);
             yOffset += mheight;
             index++;
         }
@@ -198,7 +197,7 @@ public class TabGUI extends Module {
         double rx = x + mwidth + 3;
         double ry = y + mheight * fixedSelected;
         int yoff = 0;
-        double w = FontRenderers.normal.getStringWidth(a.get(0).getName()) + 4 + 20;
+        double w = FontRenderers.getNormal().getStringWidth(a.get(0).getName()) + 4 + 20;
         Renderer.R2D.scissor(rx - 3, ry, w + 3, mheight * a.size());
         rx -= (w + 3) * (1 - (MathHelper.clamp(aprog * 2, 1, 2) - 1));
         for (Module module : a) {
@@ -211,8 +210,8 @@ public class TabGUI extends Module {
             } else {
                 bruh.getOrDefault(module, new Double[]{0d, 0d})[0] = 0d;
             }
-            FontRenderers.normal.drawString(stack, module.getName(), rx + MathHelper.lerp(bruh.getOrDefault(module, new Double[]{0d,
-                    0d})[1], 2, w / 2f - FontRenderers.normal.getStringWidth(module.getName()) / 2f), ry + yoff + (mheight - FontRenderers.normal.getFontHeight()) / 2f, 0xFFFFFF);
+            FontRenderers.getNormal().drawString(stack, module.getName(), rx + MathHelper.lerp(bruh.getOrDefault(module, new Double[]{0d, 0d})[1], 2, w / 2f - FontRenderers.getNormal()
+                    .getStringWidth(module.getName()) / 2f), ry + yoff + (mheight - FontRenderers.getNormal().getFontHeight()) / 2f, 0xFFFFFF);
             yoff += mheight;
         }
         double selectedOffset1 = mheight * trackedSelectedModule;

@@ -90,7 +90,7 @@ public class QuakeClientPlayer {
             return false;
         }
 
-        // this is probably wrong, but its what was there in 1.10.2
+        // this is probably wrong, but It's what was there in 1.10.2
         float wishspeed = movementSpeed;
         wishspeed *= 2.15f;
         double[] wishdir = getMovementDirection(player, movementInput.x, movementInput.z);
@@ -306,7 +306,7 @@ public class QuakeClientPlayer {
 
             // ground movement
             if (onGroundForReal) {
-                // apply friction before acceleration so we can accelerate back up to maxspeed afterwards
+                // apply friction before acceleration, so we can accelerate back up to maxspeed afterwards
                 //quake_Friction(); // buggy because material-based friction uses a totally different format
                 minecraft_ApplyFriction(player, momentumRetention);
 

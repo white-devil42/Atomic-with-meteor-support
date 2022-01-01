@@ -8,7 +8,8 @@ package me.zeroX150.atomic.helper.util;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.zeroX150.atomic.Atomic;
-import me.zeroX150.atomic.helper.font.GlyphPageFontRenderer;
+import me.zeroX150.atomic.feature.gui.screen.AtomicConsoleScreen;
+import me.zeroX150.atomic.helper.font.adapter.FontAdapter;
 import me.zeroX150.atomic.mixin.game.IMinecraftClientAccessor;
 import me.zeroX150.atomic.mixin.game.IRenderTickCounterAccessor;
 import net.minecraft.client.network.ServerInfo;
@@ -60,7 +61,7 @@ public class Utils {
         return new Color(Color.HSBtoRGB((System.currentTimeMillis() % 4750) / 4750f, 0.5f, 1));
     }
 
-    public static String[] splitLinesToWidth(String input, double maxWidth, GlyphPageFontRenderer rendererUsed) {
+    public static String[] splitLinesToWidth(String input, double maxWidth, FontAdapter rendererUsed) {
         List<String> dSplit = List.of(input.split("\n"));
         List<String> splits = new ArrayList<>();
         for (String s : dSplit) {
@@ -159,6 +160,12 @@ public class Utils {
             float k = MathHelper.sin(f);
             return new Vec3d(i * j, -k, h * j);
         }
+
+        public static boolean isABObstructed(Vec3d a, Vec3d b, World world, Entity requester) {
+            RaycastContext rcc = new RaycastContext(a, b, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, requester);
+            BlockHitResult bhr = world.raycast(rcc);
+            return !bhr.getPos().equals(b);
+        }
     }
 
     public static class Mouse {
@@ -188,7 +195,7 @@ public class Utils {
                 if (response.statusCode() == 204 || response.statusCode() == 400) {
                     return null; // no user / invalid username
                 }
-                JsonObject root = new JsonParser().parse(response.body()).getAsJsonObject();
+                JsonObject root = JsonParser.parseString(response.body()).getAsJsonObject();
                 return root.get("name").getAsString();
             } catch (Exception ignored) {
                 return null;
@@ -208,7 +215,7 @@ public class Utils {
                 if (response.statusCode() == 204 || response.statusCode() == 400) {
                     return null; // no user / invalid username
                 }
-                JsonObject root = new JsonParser().parse(response.body()).getAsJsonObject();
+                JsonObject root = JsonParser.parseString(response.body()).getAsJsonObject();
                 String id = root.get("id").getAsString();
                 String uuid = id.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
                 UUID u = UUID.fromString(uuid);
@@ -241,19 +248,32 @@ public class Utils {
         }
     }
 
-    public static class Client {
+    public static class Logging {
+        public static void warn(String n) {
+            message0(n, Color.YELLOW);
+        }
 
-        public static void sendMessage(String n) {
+        public static void success(String n) {
+            message0(n, AtomicConsoleScreen.SUCCESS);
+        }
+
+        public static void error(String n) {
+            message0(n, AtomicConsoleScreen.ERROR);
+        }
+
+        public static void message(String n) {
+            message0(n, AtomicConsoleScreen.DEFAULT);
+        }
+
+        public static void message0(String n, Color c) {
+            AtomicConsoleScreen.instance().log(n, c);
+        }
+
+        public static void messageChat(String n) {
             if (Atomic.client.player == null) {
                 return;
             }
             Atomic.client.player.sendMessage(Text.of("[§9A§r] " + n), false);
-        }
-
-        public static boolean isABObstructed(Vec3d a, Vec3d b, World world, Entity requester) {
-            RaycastContext rcc = new RaycastContext(a, b, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, requester);
-            BlockHitResult bhr = world.raycast(rcc);
-            return !bhr.getPos().equals(b);
         }
 
     }

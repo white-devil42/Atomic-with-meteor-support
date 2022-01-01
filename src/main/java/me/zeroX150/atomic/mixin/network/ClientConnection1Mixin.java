@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.InetSocketAddress;
 
-// dont ask me why but it works somehow
+// don't ask me why but it works somehow
 @Mixin(targets = "net/minecraft/network/ClientConnection$1") public class ClientConnection1Mixin {
 
     @Inject(method = "initChannel(Lio/netty/channel/Channel;)V", at = @At("HEAD")) public void atomic_applyProxy(Channel channel, CallbackInfo cir) {

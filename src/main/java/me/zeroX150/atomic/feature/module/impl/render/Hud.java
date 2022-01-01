@@ -143,31 +143,31 @@ public class Hud extends Module {
             entries.add(new HudEntry("", df.format(new Date()), true, true));
         }
         //entries.sort(Comparator.comparingInt(entry -> Atomic.client.textRenderer.getWidth((entry.t.isEmpty()?"":entry.t+" ")+entry.v)));
-        int yOffset = 23 / 2 + FontRenderers.normal.getFontHeight();
+        int yOffset = (int) (23 / 2 + (FontRenderers.getNormal().getMarginHeight()));
         int changedYOffset = -2;
         int xOffset = 2;
         for (HudEntry entry : entries) {
             String t = (entry.t.isEmpty() ? "" : entry.t + " ") + entry.v;
-            float width = FontRenderers.normal.getStringWidth(t);
-            float offsetToUse = Atomic.client.getWindow().getScaledHeight() - (entry.renderTaskBar ? ((23 / 2f + FontRenderers.normal.getFontHeight() / 2f)) : yOffset);
+            float width = FontRenderers.getNormal().getStringWidth(t);
+            float offsetToUse = Atomic.client.getWindow().getScaledHeight() - (entry.renderTaskBar ? ((23 / 2f + FontRenderers.getNormal().getFontHeight() / 2f)) : yOffset);
             float xL = (entry.renderTaskBar && entry.renderRTaskBar) ? (Atomic.client.getWindow().getScaledWidth() - 5 - width) : xOffset;
             if (xL == xOffset) {
-                xOffset += width + FontRenderers.normal.getStringWidth(" ");
+                xOffset += width + FontRenderers.getNormal().getStringWidth(" ");
             }
             changedYOffset++;
             if (!entry.renderTaskBar && changedYOffset == 0) {
-                yOffset -= FontRenderers.normal.getFontHeight();
+                yOffset -= FontRenderers.getNormal().getMarginHeight();
                 xOffset = 2;
             }
             //Atomic.client.textRenderer.draw(ms,t,xL,offsetToUse,0xFFFFFF);
             if (!entry.t.isEmpty()) {
                 Color rgb = Utils.getCurrentRGB();
-                FontRenderers.normal.drawString(ms, entry.t, xL, offsetToUse - 1, Utils.getCurrentRGB().getRGB());
+                FontRenderers.getNormal().drawString(ms, entry.t, xL, offsetToUse, Utils.getCurrentRGB().getRGB());
                 //Atomic.client.textRenderer.draw(ms, entry.t, xL, offsetToUse, Client.getCurrentRGB().getRGB());
-                FontRenderers.normal.drawString(ms, entry.v, xL + FontRenderers.normal.getStringWidth(entry.t + " "), offsetToUse - 1, rgb.darker().getRGB());
+                FontRenderers.getNormal().drawString(ms, entry.v, xL + FontRenderers.getNormal().getStringWidth(entry.t + " "), offsetToUse, rgb.darker().getRGB());
                 //Atomic.client.textRenderer.draw(ms, entry.v, xL + Atomic.client.textRenderer.getWidth(entry.t + " "), offsetToUse, rgb.darker().getRGB());
             } else {
-                FontRenderers.normal.drawString(ms, t, xL, offsetToUse, Utils.getCurrentRGB().getRGB());
+                FontRenderers.getNormal().drawString(ms, t, xL, offsetToUse, Utils.getCurrentRGB().getRGB());
                 //Atomic.client.textRenderer.draw(ms, t, xL, offsetToUse, Client.getCurrentRGB().getRGB());
             }
         }
@@ -177,8 +177,8 @@ public class Hud extends Module {
             float rgbIncrementer = 0.03f;
             float currentRgbSeed = (System.currentTimeMillis() % 4500) / 4500f;
             // jesus fuck
-            Module[] v = ModuleRegistry.getModules().stream().filter(Module::isEnabled)
-                    .sorted(Comparator.comparingDouble(value -> FontRenderers.normal.getStringWidth(value.getName() + (value.getContext() != null ? " " + value.getContext() : "")))) // i mean it works?
+            Module[] v = ModuleRegistry.getModules().stream().filter(Module::isEnabled).sorted(Comparator.comparingDouble(value -> FontRenderers.getNormal()
+                            .getStringWidth(value.getName() + (value.getContext() != null ? " " + value.getContext() : "")))) // i mean it works?
                     .toArray(Module[]::new);
             ArrayUtils.reverse(v);
             float maxWidth = 0;
@@ -187,19 +187,19 @@ public class Hud extends Module {
                 int r = Color.HSBtoRGB(currentRgbSeed, 0.7f, 1f);
                 currentRgbSeed += rgbIncrementer;
                 String w = module.getName() + (module.getContext() == null ? "" : " " + module.getContext());
-                float totalWidth = FontRenderers.normal.getStringWidth(w);
+                float totalWidth = FontRenderers.getNormal().getStringWidth(w);
                 maxWidth = Math.max(maxWidth, totalWidth);
                 Color c = new Color(r);
                 Color inv = new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
                 MatrixStack stack = Renderer.R3D.getEmptyMatrixStack();
-                FontRenderers.normal.drawString(stack, module.getName(), Atomic.client.getWindow().getScaledWidth() - 4 - totalWidth, moduleOffset + .5, r);
-                Renderer.R2D.fill(stack, c, Atomic.client.getWindow().getScaledWidth() - 2, moduleOffset, Atomic.client.getWindow()
-                        .getScaledWidth(), moduleOffset + FontRenderers.normal.getFontHeight() + 1);
+                FontRenderers.getNormal().drawString(stack, module.getName(), Atomic.client.getWindow().getScaledWidth() - 4 - totalWidth, moduleOffset + .5, r);
+                Renderer.R2D.fill(stack, c, Atomic.client.getWindow().getScaledWidth() - 2, moduleOffset, Atomic.client.getWindow().getScaledWidth(), moduleOffset + FontRenderers.getNormal()
+                        .getMarginHeight() + 1);
                 if (module.getContext() != null) {
-                    FontRenderers.normal.drawString(stack, module.getContext(), Atomic.client.getWindow()
-                            .getScaledWidth() - 4 - totalWidth + FontRenderers.normal.getStringWidth(module.getName() + " "), moduleOffset + .5, inv.getRGB());
+                    FontRenderers.getNormal().drawString(stack, module.getContext(), Atomic.client.getWindow().getScaledWidth() - 4 - totalWidth + FontRenderers.getNormal()
+                            .getStringWidth(module.getName() + " "), moduleOffset + .5, inv.getRGB());
                 }
-                moduleOffset += FontRenderers.normal.getFontHeight() + 1;
+                moduleOffset += FontRenderers.getNormal().getMarginHeight() + 1;
             }
         }
         HudRenderer.getInstance().render();

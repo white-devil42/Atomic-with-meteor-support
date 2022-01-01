@@ -26,15 +26,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Flattener extends Module {
-    BooleanValue      makeSame           = (BooleanValue) this.config.create("Make same", false).description("Make the floor the block you're holding, no matter what.");
-    BooleanValue      asyncPlaceBreak    = (BooleanValue) this.config.create("Async place / break", true).description("Whether or not to place blocks and break them at the same time");
-    BooleanValue      breakSides         = (BooleanValue) this.config.create("Break sides", true).description("Whether or not to clear the area so you can walk on it");
-    SliderValue       amountPerTick      = (SliderValue) this.config.create("Amount Per Tick", 3, 1, 20, 0).description("How many actions to do / tick");
-    List<RenderEntry> renders            = new ArrayList<>();
-    Vec3d             origin             = null;
-    double            range              = 8;
-    int               prevSlot           = -1;
-    boolean           toBreakEmptyBefore = false;
+    final BooleanValue      makeSame        = (BooleanValue) this.config.create("Make same", false).description("Make the floor the block you're holding, no matter what.");
+    final BooleanValue      asyncPlaceBreak = (BooleanValue) this.config.create("Async place / break", true).description("Whether or not to place blocks and break them at the same time");
+    final BooleanValue      breakSides      = (BooleanValue) this.config.create("Break sides", true).description("Whether or not to clear the area so you can walk on it");
+    final SliderValue       amountPerTick   = (SliderValue) this.config.create("Amount Per Tick", 3, 1, 20, 0).description("How many actions to do / tick");
+    final List<RenderEntry> renders         = new ArrayList<>();
+    final double            range           = 8;
+    Vec3d   origin             = null;
+    int     prevSlot           = -1;
+    boolean toBreakEmptyBefore = false;
 
     public Flattener() {
         super("Flattener", "Makes everything around you flat, good for making a floor or base", ModuleType.WORLD);

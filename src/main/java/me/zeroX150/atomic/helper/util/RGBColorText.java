@@ -10,8 +10,8 @@ import java.util.List;
 
 public class RGBColorText {
 
-    public static RGBEntry NEWLINE = new RGBEntry("\n", 0xFFFFFF);
-    List<RGBEntry> entries = new ArrayList<>();
+    public static final RGBEntry       NEWLINE = new RGBEntry("\n", 0xFFFFFF);
+    final               List<RGBEntry> entries = new ArrayList<>();
 
     public RGBColorText(RGBColorText text) {
         append(text);

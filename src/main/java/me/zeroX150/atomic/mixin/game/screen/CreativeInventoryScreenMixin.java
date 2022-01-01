@@ -31,7 +31,7 @@ import java.util.Objects;
         ButtonWidget nbtEditor = new ButtonWidget(5, 5, 100, 20, Text.of("NBT editor"), button -> {
             ItemStack hand = Objects.requireNonNull(Atomic.client.player).getInventory().getMainHandStack();
             if (hand.isEmpty()) {
-                Utils.Client.sendMessage("You're not holding anything idiot");
+                Utils.Logging.messageChat("You're not holding anything idiot");
                 return;
             }
             Atomic.client.setScreen(new NbtEditScreen(hand.getOrCreateNbt()));

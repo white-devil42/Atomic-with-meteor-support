@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.command.Command;
+import me.zeroX150.atomic.feature.module.impl.render.ItemByteSize;
+import me.zeroX150.atomic.helper.ByteCounter;
 import me.zeroX150.atomic.helper.event.EventType;
 import me.zeroX150.atomic.helper.event.Events;
 import me.zeroX150.atomic.helper.util.Utils;
@@ -19,15 +21,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 
+import java.awt.Color;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ResultOfMethodCallIgnored") public class ItemStorage extends Command {
 
@@ -59,8 +59,7 @@ import java.util.Optional;
         }
         try {
             String contents = FileUtils.readFileToString(CONFIG_FILE, StandardCharsets.UTF_8);
-            JsonParser p = new JsonParser();
-            JsonElement jo = p.parse(contents);
+            JsonElement jo = JsonParser.parseString(contents);
             JsonArray je = jo.getAsJsonArray();
             items.clear();
             for (JsonElement jsonElement : je) {
@@ -103,6 +102,20 @@ import java.util.Optional;
         }
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"save", "list", "get", "delete"};
+        }
+        if (args.length == 2) {
+            return switch (args[0].toLowerCase()) {
+                case "save" -> new String[]{"(name)"};
+                case "get", "delete" -> items.stream().map(ItemEntry::name).collect(Collectors.toList()).toArray(String[]::new);
+                default -> new String[0];
+            };
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
             onExecute(new String[]{"help"});
@@ -111,48 +124,57 @@ import java.util.Optional;
         switch (args[0].toLowerCase()) {
             case "save" -> {
                 if (args.length < 2) {
-                    Utils.Client.sendMessage("I need a name for the item");
+                    error("I need a name for the item");
                     return;
                 }
                 String n = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 if (items.stream().anyMatch(itemEntry -> itemEntry.name.equalsIgnoreCase(n))) {
-                    Utils.Client.sendMessage("An item with that name already exists bruh");
+                    error("An item with that name already exists bruh");
                     return;
                 }
                 ItemStack hold = Objects.requireNonNull(Atomic.client.player).getInventory().getMainHandStack();
                 if (hold.isEmpty()) {
-                    Utils.Client.sendMessage("You arent holding anything");
+                    error("You arent holding anything");
                     return;
                 }
                 items.add(new ItemEntry(n, hold.getItem(), hold.getOrCreateNbt()));
-                Utils.Client.sendMessage("Saved item as " + n);
+                success("Saved item as " + n);
             }
             case "list" -> {
                 if (items.isEmpty()) {
-                    Utils.Client.sendMessage("You have no items saved. save one with \"items save\"");
+                    error("You have no items saved. save one with \"items save\"");
                 } else {
-                    Utils.Client.sendMessage("All saved items:");
+                    message("All saved items:");
                     for (ItemEntry item : items) {
-                        LiteralText bruh = new LiteralText("[§9A§r]  §b" + item.name + "§r: is §a" + item.type.getName().getString());
-                        ItemStack source = new ItemStack(item.type);
-                        source.setNbt(item.tag);
-                        HoverEvent.ItemStackContent ics = new HoverEvent.ItemStackContent(source);
-                        Style s = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, ics))
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ".items get " + item.name));
-                        bruh.setStyle(s);
-                        Objects.requireNonNull(Atomic.client.player).sendMessage(bruh, false);
+                        ByteCounter inst = ByteCounter.instance();
+                        inst.reset();
+                        boolean error = false;
+                        try {
+                            item.tag.write(inst);
+                        } catch (Exception ignored) {
+                            error = true;
+                        }
+                        long count = inst.getSize();
+                        String fmt;
+                        if (error) {
+                            fmt = "Unknown";
+                        } else {
+                            fmt = ItemByteSize.humanReadableByteCountBin(count);
+                        }
+                        message(item.name + ": " + item.type.getName().getString());
+                        message0("  Size: " + fmt, Color.GRAY);
                     }
                 }
             }
             case "get" -> {
                 if (args.length < 2) {
-                    Utils.Client.sendMessage("I need the name of the item to generate");
+                    error("I need the name of the item to generate");
                     return;
                 }
                 String n = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 Optional<ItemEntry> item = items.stream().filter(itemEntry -> itemEntry.name.equalsIgnoreCase(n)).findFirst();
                 if (item.isEmpty()) {
-                    Utils.Client.sendMessage("Didnt find that item. do list to view them");
+                    error("Didnt find that item. do list to view them");
                     return;
                 }
                 ItemStack stack = new ItemStack(item.get().type());
@@ -161,29 +183,29 @@ import java.util.Optional;
                         .getInventory().selectedSlot), stack);
                 Objects.requireNonNull(Atomic.client.getNetworkHandler()).sendPacket(p);
                 //Atomic.client.player.getInventory().addPickBlock(stack);
-                Utils.Client.sendMessage("Generated item " + n);
+                success("Generated item " + n);
             }
             case "delete" -> {
                 if (args.length < 2) {
-                    Utils.Client.sendMessage("I need the name of the item to delete");
+                    error("I need the name of the item to delete");
                     return;
                 }
                 String n = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 Optional<ItemEntry> item = items.stream().filter(itemEntry -> itemEntry.name.equalsIgnoreCase(n)).findFirst();
                 if (item.isEmpty()) {
-                    Utils.Client.sendMessage("Didnt find that item. do list to view them");
+                    error("Didnt find that item. do list to view them");
                     return;
                 }
                 items.remove(item.get());
                 //Atomic.client.player.getInventory().addPickBlock(stack);
-                Utils.Client.sendMessage("Deleted item " + n);
+                success("Deleted item " + n);
             }
             default -> {
-                Utils.Client.sendMessage("Commands:");
-                Utils.Client.sendMessage(" - save: Saves the item you're holding");
-                Utils.Client.sendMessage(" - list: Lists all saved items");
-                Utils.Client.sendMessage(" - delete: Deletes an item from the list");
-                Utils.Client.sendMessage(" - get: Gets an item you saved earlier");
+                message("Commands:");
+                message(" - save: Saves the item you're holding");
+                message(" - list: Lists all saved items");
+                message(" - delete: Deletes an item from the list");
+                message(" - get: Gets an item you saved earlier");
             }
         }
     }

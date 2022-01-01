@@ -48,7 +48,7 @@ public class SpinAutism extends Module {
     @Override public void onFastTick() {
         timeout--; // decrease timeout
         if (timeout > 0) {
-            return; // if timeout isnt expired, do nothing
+            return; // if timeout isn't expired, do nothing
         }
         timeout = (int) Math.floor(speed.getValue()); // timeout expired, set it back to full
         Rotations.setClientPitch((float) ((Math.random() * 60) - 30));

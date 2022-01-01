@@ -115,15 +115,15 @@ task execBuild(dependsOn: build) {
         // clear build folder
         File builds = new File("./builds")
         for (File f : builds.listFiles()) {
-            f.delete()
+            if (f.name.endsWith("v"+project.minecraft_version+".jar")) f.delete() // new build for version
         }
         //builds.mkdir()
 
-        filename += "_b"
+        filename += "-b"
         File versionFile = new File("./src/main/resources/VERSION")
         // store it in resources so its available to be used in game too
         String currentVersion = versionFile.text
-        filename += currentVersion + ".jar"
+        filename += currentVersion + "-v"+project.minecraft_version+".jar"
         file("./build/libs/atomic-1.0.0.jar").renameTo(file(filename))
         Integer versionNum = currentVersion as Integer
         versionNum = versionNum + 1

@@ -19,13 +19,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class InfoScreen extends ImGuiProxyScreen {
-    static Map<UUID, String> usernames = new ConcurrentHashMap<>();
-    static ExecutorService   resolver  = Executors.newFixedThreadPool(3);
+    static final Map<UUID, String> usernames = new ConcurrentHashMap<>();
+    static final ExecutorService   resolver  = Executors.newFixedThreadPool(3);
     //    static List<Float> lastTps = new ArrayList<>();
-    static FloatList         lastTps   = new FloatArrayList();
-    static FloatList         packIn    = new FloatArrayList();
-    static FloatList         packOut   = new FloatArrayList();
-    static Timer             updater   = new Timer();
+    static final FloatList         lastTps   = new FloatArrayList();
+    static final FloatList         packIn    = new FloatArrayList();
+    static final FloatList         packOut   = new FloatArrayList();
+    static final Timer             updater   = new Timer();
     PlayerListEntry            selectedPlayer       = null;
     AbstractClientPlayerEntity selectedLoadedPlayer = null;
     UUID                       selectedFriend       = null;
@@ -68,11 +68,17 @@ public class InfoScreen extends ImGuiProxyScreen {
         float[] pin = packIn.toFloatArray();
         float[] pout = packOut.toFloatArray();
         ImGui.text("TPS");
-        ImGui.plotLines("", tps, tps.length, 0, "Average: " + (lastTps.stream().reduce(Float::sum).orElse(0f) / lastTps.size()), 0, 20, 0, 100);
+        ImGui.pushItemWidth(300);
+        ImGui.plotLines("", tps, tps.length, 0, "Average: " + (lastTps.doubleStream().reduce(Double::sum).orElse(0f) / lastTps.size()), 0, 20, 0, 100);
+        ImGui.popItemWidth();
         ImGui.text("Packets in");
+        ImGui.pushItemWidth(300);
         ImGui.plotLines("", pin, pin.length, 0, "", min(pin), max(pin), 0, 100);
+        ImGui.popItemWidth();
         ImGui.text("Packets out");
+        ImGui.pushItemWidth(300);
         ImGui.plotLines("", pout, pout.length, 0, "", min(pout), max(pout), 0, 100);
+        ImGui.popItemWidth();
         ImGui.separator();
         ImGui.text("Address: " + Atomic.client.getNetworkHandler().getConnection().getAddress().toString());
         ImGui.text("Tab list players: " + Atomic.client.getNetworkHandler().getPlayerList().size());
@@ -200,7 +206,7 @@ public class InfoScreen extends ImGuiProxyScreen {
                         ImGui.sameLine();
                         ImGui.text("Copied!");
                     }
-                    // show remove if its still in the list, and re-add if we removed it via the interface
+                    // show remove if It's still in the list, and re-add if we removed it via the interface
                     if (Friends.getFriends().stream().anyMatch(friend -> friend.getUuid().equals(selectedFriend))) {
                         if (ImGui.button("Remove friend")) {
                             Friends.getFriends().removeIf(friend -> friend.getUuid().equals(selectedFriend));

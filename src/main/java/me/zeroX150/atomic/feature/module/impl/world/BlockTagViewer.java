@@ -93,7 +93,7 @@ public class BlockTagViewer extends Module {
 
     @Override public void onHudRender() {
         List<Entry> l = new ArrayList<>(entries);
-        l.sort(Comparator.comparingDouble(value -> -FontRenderers.mono.getStringWidth(value.v)));
+        l.sort(Comparator.comparingDouble(value -> -FontRenderers.getMono().getStringWidth(value.v)));
         entries = l;
         if (l.isEmpty()) {
             return;
@@ -106,7 +106,7 @@ public class BlockTagViewer extends Module {
         float r = 0;
         for (Entry entry : l) {
             if (!entry.removed) {
-                r = FontRenderers.mono.getStringWidth(entry.v) + 4;
+                r = FontRenderers.getMono().getStringWidth(entry.v) + 4;
                 break;
             }
         }
@@ -119,10 +119,10 @@ public class BlockTagViewer extends Module {
         for (Entry entry : l.toArray(new Entry[0])) {
             s.push();
             double prog = e(entry.animProg);
-            double c = prog * FontRenderers.mono.getFontHeight();
+            double c = prog * FontRenderers.getMono().getFontHeight();
             s.scale(1, (float) prog, 1);
-            Renderer.R2D.fill(s, new CustomColor(0, 0, 0, (int) (prog * 100)), 0, 0, mw, FontRenderers.mono.getFontHeight());
-            FontRenderers.mono.drawString(s, entry.v, 2, 0.5f, new CustomColor(255, 255, 255, (int) (prog * 255)).getRGB());
+            Renderer.R2D.fill(s, new CustomColor(0, 0, 0, (int) (prog * 100)), 0, 0, mw, FontRenderers.getMono().getFontHeight());
+            FontRenderers.getMono().drawString(s, entry.v, 2, 0.5f, new CustomColor(255, 255, 255, (int) (prog * 255)).getRGB());
             s.pop();
             s.translate(0, c, 0);
         }

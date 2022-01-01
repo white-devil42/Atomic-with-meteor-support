@@ -36,8 +36,8 @@ public class Slider extends ClickableWidget {
     @Override public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         Renderer.R2D.fill(matrices, Themes.currentActiveTheme.center(), (x + (width * getValue())), y, x + width, y + height);
         Renderer.R2D.fill(matrices, Themes.currentActiveTheme.left(), x, y, (x + (width * getValue())), y + height);
-        FontRenderers.normal.drawCenteredString(matrices, Utils.Math.roundToDecimal(value, prec) + "", x + width / 2f, y + height / 2f - FontRenderers.normal.getFontHeight() / 2f, Themes.currentActiveTheme.fontColor()
-                .getRGB());
+        FontRenderers.getNormal().drawCenteredString(matrices, Utils.Math.roundToDecimal(value, prec) + "", x + width / 2f, y + height / 2f - FontRenderers.getNormal()
+                .getFontHeight() / 2f, Themes.currentActiveTheme.fontColor().getRGB());
         //drawCenteredText(matrices, Atomic.client.textRenderer, Client.roundToN(value, prec) + "", x + (width / 2), y + (height / 2 - (9 / 2)), 0xFFFFFF);
     }
 

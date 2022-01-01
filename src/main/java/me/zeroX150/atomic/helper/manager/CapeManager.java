@@ -14,17 +14,14 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CapeManager {
-    public static List<CapeEntry> capes = new ArrayList<>();
+    public static final List<CapeEntry> capes = new ArrayList<>();
 
     public static void init() {
-        Map<String, String> alreadyDownloadedWithFN = new HashMap<>();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofSeconds(10)).build();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://raw.githubusercontent.com/cornos/atomicFiles/master/capes.txt")).timeout(Duration.ofSeconds(10)).GET().build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(s -> {
@@ -49,7 +46,6 @@ public class CapeManager {
                 String capeUrl = split[1];
                 try {
                     UUID u = UUID.fromString(uuid);
-                    alreadyDownloadedWithFN.put(capeUrl, u + ".png");
                     capes.add(new CapeEntry(u, capeUrl, File.createTempFile("atomicCape", u.toString()), new AtomicBoolean(false)));
                 } catch (Exception ignored) {
                     Atomic.log(Level.ERROR, "Invalid UUID entry \"" + uuid + "\"");

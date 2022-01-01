@@ -291,7 +291,7 @@ public class MicrosoftAuthenticator extends Authenticator<me.zeroX150.authlib.lo
         }
         String lines = bufferedReader.lines().collect(Collectors.joining());
 
-        JsonObject jsonObject = new JsonParser().parse(lines).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(lines).getAsJsonObject();
         if (jsonObject.has("error")) {
             throw new AuthFailureException(jsonObject.get("error") + ": " + jsonObject.get("error_description"));
         }

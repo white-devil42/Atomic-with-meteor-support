@@ -42,7 +42,7 @@ public class Renderer {
 
     public static class R3D {
 
-        static         MatrixStack empty           = new MatrixStack();
+        static final   MatrixStack empty           = new MatrixStack();
         private static MatrixStack lastRenderStack = new MatrixStack();
 
         public static void renderOutlineIntern(Vec3d start, Vec3d dimensions, MatrixStack stack, BufferBuilder buffer) {

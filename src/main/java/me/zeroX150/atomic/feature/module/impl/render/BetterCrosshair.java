@@ -42,7 +42,7 @@ public class BetterCrosshair extends Module {
     public static void render() {
         int x = Atomic.client.getWindow().getScaledWidth() / 2;
         int y = Atomic.client.getWindow().getScaledHeight() / 2;
-        // it didnt work otherwise please fucking forgive me
+        // it didn't work otherwise please fucking forgive me
         int i = (int) Math.floor(inset.getValue());
         int l = (int) Math.floor(length.getValue());
         if (gradient.getValue()) {

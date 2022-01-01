@@ -5,7 +5,6 @@
 
 package me.zeroX150.atomic.feature.module;
 
-import me.zeroX150.atomic.feature.module.impl.client.Alts;
 import me.zeroX150.atomic.feature.module.impl.client.ClientConfig;
 import me.zeroX150.atomic.feature.module.impl.combat.AimAssist;
 import me.zeroX150.atomic.feature.module.impl.combat.ArmorSwitch;
@@ -113,6 +112,7 @@ import me.zeroX150.atomic.feature.module.impl.world.GodBridge;
 import me.zeroX150.atomic.feature.module.impl.world.InstantBreak;
 import me.zeroX150.atomic.feature.module.impl.world.LeverAura;
 import me.zeroX150.atomic.feature.module.impl.world.MassFillNuke;
+import me.zeroX150.atomic.feature.module.impl.world.MassUse;
 import me.zeroX150.atomic.feature.module.impl.world.MidAirPlace;
 import me.zeroX150.atomic.feature.module.impl.world.NoBreakDelay;
 import me.zeroX150.atomic.feature.module.impl.world.Nuker;
@@ -127,10 +127,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ModuleRegistry {
+    static final List<Module> modules     = new ArrayList<>();
+    static       boolean      initialized = false;
 
-    static final List<Module> modules = new ArrayList<>();
-
-    static {
+    public static void init() {
+        initialized = true;
         modules.add(new TestModule());
         modules.add(new ClickGUI());
         modules.add(new AirJump());
@@ -166,7 +167,6 @@ public class ModuleRegistry {
         modules.add(new ClientConfig());
         modules.add(new Tracers());
         modules.add(new ESP());
-        modules.add(new Alts());
         modules.add(new HologramAura());
         modules.add(new TexPackSpoof());
         modules.add(new Bunker());
@@ -246,14 +246,18 @@ public class ModuleRegistry {
         modules.add(new ItemByteSize());
         modules.add(new Physics());
         modules.add(new XCarry());
+        modules.add(new MassUse());
     }
 
     public static void sortModulesPostInit() {
-        modules.sort(Comparator.comparingDouble(value -> -FontRenderers.normal.getStringWidth(value.getName())));
+        if (!initialized) {
+            init();
+        }
+        modules.sort(Comparator.comparingDouble(value -> -FontRenderers.getNormal().getStringWidth(value.getName())));
     }
 
     public static boolean isDebuggerEnabled() {
-        return getByClass(Debugger.class).isEnabled();
+        return getDebugger().isEnabled();
     }
 
     public static Debugger getDebugger() {
@@ -261,19 +265,28 @@ public class ModuleRegistry {
     }
 
     public static List<Module> getModules() {
+        if (!initialized) {
+            init();
+        }
         return modules;
     }
 
     @SuppressWarnings("unchecked") public static <T extends Module> T getByClass(Class<T> clazz) {
+        if (!initialized) {
+            init();
+        }
         for (Module module : getModules()) {
             if (module.getClass() == clazz) {
                 return (T) module;
             }
         }
-        throw new IllegalStateException("Unregistered module");
+        throw new IllegalStateException("Unregistered module: " + clazz.getName());
     }
 
     public static Module getByName(String n) {
+        if (!initialized) {
+            init();
+        }
         for (Module module : getModules()) {
             if (module.getName().equalsIgnoreCase(n)) {
                 return module;

@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Physics extends Module {
-    MultiValue  mode  = this.config.create("Mode", "Area", "Area", "Click");
-    SliderValue range = this.config.create("Range", 4, 0, 10, 1);
+    final MultiValue  mode  = this.config.create("Mode", "Area", "Area", "Click");
+    final SliderValue range = this.config.create("Range", 4, 0, 10, 1);
     //    final int range = 4;
-    boolean     go    = false;
+    boolean go = false;
 
     public Physics() {
         super("Physics", "Applies physics to nearby blocks, idea proudly stolen from saturn.", ModuleType.FUN);

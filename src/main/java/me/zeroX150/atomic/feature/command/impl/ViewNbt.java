@@ -7,7 +7,6 @@ package me.zeroX150.atomic.feature.command.impl;
 
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.command.Command;
-import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtByte;
 import net.minecraft.nbt.NbtByteArray;
@@ -31,20 +30,27 @@ public class ViewNbt extends Command {
         super("ViewNbt", "Views the nbt data of the current item", "viewnbt", "shownbt");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"(flags)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         boolean formatted = false;
         boolean copy = false;
         boolean noColor = false;
         if (args.length == 0) {
-            Utils.Client.sendMessage("pro tip: use \"viewnbt help\" to show additional options");
+            message("pro tip: use \"viewnbt help\" to show additional options");
         } else if (args[0].equalsIgnoreCase("help")) {
-            Utils.Client.sendMessage("Use flags like these to control what to do with the nbt:");
-            Utils.Client.sendMessage("  N - Nothing (to skip the help message)");
-            Utils.Client.sendMessage("  F - Formatted (to format the nbt in a nice way)");
-            Utils.Client.sendMessage("  C - Copy (to copy the nbt to clipboard)");
-            Utils.Client.sendMessage("  W - White (to show uncolored nbt)");
-            Utils.Client.sendMessage("Examples: \".viewnbt FC\" to view a formatted view of the nbt and to copy it to clipboard");
-            Utils.Client.sendMessage("\".viewnbt CW\" to copy the nbt and show it without colors");
+            message("Use flags like these to control what to do with the nbt:");
+            message("  N - Nothing (to skip the help message)");
+            message("  F - Formatted (to format the nbt in a nice way)");
+            message("  C - Copy (to copy the nbt to clipboard)");
+            message("  W - White (to show uncolored nbt)");
+            message("Examples: \".viewnbt FC\" to view a formatted view of the nbt and to copy it to clipboard");
+            message("\".viewnbt CW\" to copy the nbt and show it without colors");
             return;
         } else {
             for (char c : args[0].toLowerCase().toCharArray()) {
@@ -55,26 +61,26 @@ public class ViewNbt extends Command {
                     case 'c' -> copy = true;
                     case 'w' -> noColor = true;
                     default -> {
-                        Utils.Client.sendMessage("Unknown option '" + c + "'.");
+                        error("Unknown option '" + c + "'.");
                         return;
                     }
                 }
             }
         }
         if (Objects.requireNonNull(Atomic.client.player).getInventory().getMainHandStack().isEmpty()) {
-            Utils.Client.sendMessage("you're not holding anything");
+            error("you're not holding anything");
             return;
         }
         ItemStack stack = Atomic.client.player.getInventory().getMainHandStack();
         NbtCompound c = stack.getNbt();
         if (!stack.hasNbt() || c == null) {
-            Utils.Client.sendMessage("stack has no data");
+            error("stack has no data");
             return;
         }
         if (formatted) {
             parse(c, "(root)");
         } else {
-            // gotta use .sendMessage because of monkey minecraft api
+            // I've to use .sendMessage because of monkey minecraft api
             if (noColor) {
                 Atomic.client.player.sendMessage(Text.of(c.asString()), false);
             } else {
@@ -83,13 +89,13 @@ public class ViewNbt extends Command {
         }
         if (copy) {
             Atomic.client.keyboard.setClipboard(c.asString());
-            Utils.Client.sendMessage("Copied nbt!");
+            success("Copied nbt!");
         }
     }
 
     void parse(NbtElement ne, String componentName) {
         if (ne instanceof NbtByteArray || ne instanceof NbtCompound || ne instanceof NbtIntArray || ne instanceof NbtList || ne instanceof NbtLongArray) {
-            Utils.Client.sendMessage(" ".repeat(i) + (componentName == null ? "-" : componentName + ":"));
+            message(" ".repeat(i) + (componentName == null ? "-" : componentName + ":"));
             i += 2;
             if (ne instanceof NbtByteArray array) {
                 for (NbtByte nbtByte : array) {
@@ -116,7 +122,7 @@ public class ViewNbt extends Command {
             }
             i -= 2;
         } else {
-            Utils.Client.sendMessage(" ".repeat(i) + (componentName == null ? "-" : componentName + ":") + " " + ne.toString().replaceAll("§", "&"));
+            message(" ".repeat(i) + (componentName == null ? "-" : componentName + ":") + " " + ne.toString().replaceAll("§", "&"));
         }
     }
 }

@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.Color;
+
 @Mixin(Keyboard.class) public class KeyboardMixin {
 
     @Shadow private boolean repeatEvents;
@@ -34,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
     @Inject(method = "onKey", at = @At("RETURN")) void atomic_postKeyPressed(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
         if (ModuleRegistry.isDebuggerEnabled()) {
-            Utils.Client.sendMessage(String.format("D_KeyEvent window=%s;key=%s;sc=%s;a=%s;mod=%s", window, key, scancode, action, modifiers));
+            Utils.Logging.message0(String.format("D_KeyEvent window=%s;key=%s;sc=%s;a=%s;mod=%s", window, key, scancode, action, modifiers), Color.GRAY);
             if (ModuleRegistry.getDebugger().disableKeyEvent.getValue()) {
                 return;
             }

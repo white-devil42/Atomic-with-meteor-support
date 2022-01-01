@@ -5,7 +5,9 @@
 
 package me.zeroX150.atomic.feature.command;
 
-public abstract class Command {
+import me.zeroX150.atomic.helper.util.Utils;
+
+public abstract class Command extends Utils.Logging {
 
     private final String   name;
     private final String   description;
@@ -30,4 +32,9 @@ public abstract class Command {
     }
 
     public abstract void onExecute(String[] args);
+
+    public String[] getSuggestions(String fullCommand, String[] args) {
+        return new String[0];
+    }
+
 }

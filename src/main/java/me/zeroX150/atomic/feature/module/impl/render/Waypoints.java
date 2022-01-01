@@ -88,7 +88,7 @@ public class Waypoints extends Module {
 
         try {
             String data = FileUtils.readFileToString(WAYPOINTS_FILE, StandardCharsets.UTF_8);
-            JsonObject jo = new JsonParser().parse(data).getAsJsonObject();
+            JsonObject jo = JsonParser.parseString(data).getAsJsonObject();
             JsonArray ja = jo.getAsJsonArray("waypoints");
             for (JsonElement jsonElement : ja) {
                 JsonObject current = (JsonObject) jsonElement;
@@ -145,11 +145,12 @@ public class Waypoints extends Module {
             Renderer.R3D.renderFilled(v, new Vec3d(1, Atomic.client.world.getHeight(), 1), new CustomColor(r, g, b, a), matrices);
             if (Renderer.R2D.isOnScreen(screenSpaceCenter)) {
                 Utils.TickManager.runOnNextRender(() -> {
-                    float w = FontRenderers.mono.getStringWidth(waypoint.name);
+                    float w = FontRenderers.getMono().getStringWidth(waypoint.name);
                     float pad = 2;
                     Renderer.R2D.fill(Themes.Theme.ATOMIC.getPalette()
-                            .left(), screenSpaceCenter.x - w / 2 - pad, screenSpaceCenter.y - pad, screenSpaceCenter.x + w / 2 + pad, screenSpaceCenter.y + FontRenderers.mono.getFontHeight() + pad);
-                    FontRenderers.mono.drawCenteredString(Renderer.R3D.getEmptyMatrixStack(), waypoint.name, screenSpaceCenter.x, screenSpaceCenter.y, 0xFFFFFF);
+                            .left(), screenSpaceCenter.x - w / 2 - pad, screenSpaceCenter.y - pad, screenSpaceCenter.x + w / 2 + pad, screenSpaceCenter.y + FontRenderers.getMono()
+                            .getFontHeight() + pad);
+                    FontRenderers.getMono().drawCenteredString(Renderer.R3D.getEmptyMatrixStack(), waypoint.name, screenSpaceCenter.x, screenSpaceCenter.y, 0xFFFFFF);
                 });
             }
         }

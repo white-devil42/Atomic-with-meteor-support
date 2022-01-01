@@ -10,7 +10,6 @@ import me.zeroX150.atomic.feature.command.Command;
 import me.zeroX150.atomic.feature.module.Module;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.ModuleType;
-import me.zeroX150.atomic.helper.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +22,19 @@ public class Panic extends Command {
         super("Panic", "oh shit", "panic", "p", "disableall", "dall", "fuck");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"[hard]", "[restore]"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
             stored.clear();
-            Utils.Client.sendMessage("Disabling all non-render modules");
-            Utils.Client.sendMessage("Specify \"hard\" to disable all modules and wipe chat");
-            Utils.Client.sendMessage("Specify \"restore\" to restore all enabled modules before the panic");
+            message("Disabling all non-render modules");
+            message("Specify \"hard\" to disable all modules and wipe chat");
+            message("Specify \"restore\" to restore all enabled modules before the panic");
             for (Module module : ModuleRegistry.getModules()) {
                 if (module.getModuleType() != ModuleType.RENDER && module.isEnabled()) {
                     stored.add(module);
@@ -46,7 +52,7 @@ public class Panic extends Command {
             Atomic.client.inGameHud.getChatHud().clear(true);
         } else if (args[0].equalsIgnoreCase("restore")) {
             if (stored.size() == 0) {
-                Utils.Client.sendMessage("The stored module list is empty");
+                error("The stored module list is empty");
             } else {
                 for (Module module : stored) {
                     if (!module.isEnabled()) {

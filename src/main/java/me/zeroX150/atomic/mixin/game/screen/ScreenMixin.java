@@ -7,12 +7,9 @@ package me.zeroX150.atomic.mixin.game.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.zeroX150.atomic.Atomic;
-import me.zeroX150.atomic.feature.command.Command;
-import me.zeroX150.atomic.feature.command.CommandRegistry;
 import me.zeroX150.atomic.feature.gui.screen.MessageScreen;
 import me.zeroX150.atomic.feature.gui.screen.NonClearingInit;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
-import me.zeroX150.atomic.feature.module.impl.client.ClientConfig;
 import me.zeroX150.atomic.feature.module.impl.render.CleanGUI;
 import me.zeroX150.atomic.helper.render.Renderer;
 import me.zeroX150.atomic.helper.util.Utils;
@@ -36,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
-import java.util.Arrays;
 
 @Mixin(Screen.class) public abstract class ScreenMixin extends DrawableHelper {
 
@@ -45,26 +41,6 @@ import java.util.Arrays;
     @Shadow @Nullable protected MinecraftClient client;
 
     @Shadow protected abstract void clearChildren();
-
-    @Inject(method = "sendMessage(Ljava/lang/String;Z)V", at = @At("HEAD"), cancellable = true) public void atomic_preSendMessage(String message, boolean toHud, CallbackInfo ci) {
-        if (this.client == null) {
-            return;
-        }
-        if (message.toLowerCase().startsWith(ClientConfig.chatPrefix.getValue().toLowerCase())) {
-            ci.cancel();
-            this.client.inGameHud.getChatHud().addToMessageHistory(message);
-            String[] args = message.substring(ClientConfig.chatPrefix.getValue().length()).split(" +");
-            String command = args[0].toLowerCase();
-            args = Arrays.copyOfRange(args, 1, args.length);
-            Command c = CommandRegistry.getByAlias(command);
-            if (c == null) {
-                Utils.Client.sendMessage("Command not found.");
-            } else {
-                Utils.Client.sendMessage(command);
-                c.onExecute(args);
-            }
-        }
-    }
 
     @Redirect(method = "renderBackground(Lnet/minecraft/client/util/math/MatrixStack;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;fillGradient(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"))
@@ -134,7 +110,7 @@ import java.util.Arrays;
             if (t) {
                 screen.sendMessage(message, toHud);
             } else {
-                Utils.Client.sendMessage("Blocked sending of message \"" + message + "\"");
+                Utils.Logging.message("Blocked sending of message \"" + message + "\"");
             }
         }, MessageScreen.ScreenType.YESNO);
         Utils.TickManager.runInNTicks(0, () -> Atomic.client.setScreen(confirmScreen));

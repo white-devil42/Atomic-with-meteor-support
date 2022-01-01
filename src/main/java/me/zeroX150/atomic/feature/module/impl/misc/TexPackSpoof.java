@@ -31,10 +31,10 @@ public class TexPackSpoof extends Module {
             if (event.getPacket() instanceof ResourcePackSendS2CPacket pack) {
                 event.setCancelled(true);
                 Notification.create(6000, "AutoServerTexPack", true, "Received texture pack. Spoofing.");
-                Utils.Client.sendMessage("Server sent texture pack.");
-                Utils.Client.sendMessage("  SHA1: " + pack.getSHA1());
-                Utils.Client.sendMessage("  Download: " + pack.getURL());
-                Utils.Client.sendMessage("  Is required: " + (pack.isRequired() ? "§cYes" : "§aNo") + "§r");
+                Utils.Logging.messageChat("Server sent texture pack.");
+                Utils.Logging.messageChat("  SHA1: " + pack.getSHA1());
+                Utils.Logging.messageChat("  Download: " + pack.getURL());
+                Utils.Logging.messageChat("  Is required: " + (pack.isRequired() ? "§cYes" : "§aNo") + "§r");
                 Objects.requireNonNull(Atomic.client.getNetworkHandler()).sendPacket(new ResourcePackStatusC2SPacket(ResourcePackStatusC2SPacket.Status.ACCEPTED));
                 Atomic.client.getNetworkHandler().sendPacket(new ResourcePackStatusC2SPacket(ResourcePackStatusC2SPacket.Status.SUCCESSFULLY_LOADED));
             }

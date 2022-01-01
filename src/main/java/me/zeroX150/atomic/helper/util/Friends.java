@@ -40,8 +40,7 @@ import java.util.UUID;
         }
         try {
             String contents = FileUtils.readFileToString(CONFIG_FILE, StandardCharsets.UTF_8);
-            JsonParser p = new JsonParser();
-            JsonElement jo = p.parse(contents);
+            JsonElement jo = JsonParser.parseString(contents);
             JsonArray je = jo.getAsJsonArray();
             friends.clear();
             for (JsonElement jsonElement : je) {

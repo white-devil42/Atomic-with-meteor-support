@@ -6,6 +6,8 @@
 package me.zeroX150.atomic.mixin.game.screen;
 
 import me.zeroX150.atomic.Atomic;
+import me.zeroX150.atomic.feature.command.CommandRegistry;
+import me.zeroX150.atomic.feature.gui.screen.AtomicConsoleScreen;
 import me.zeroX150.atomic.feature.gui.screen.FastTickable;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.impl.client.ClientConfig;
@@ -13,6 +15,7 @@ import me.zeroX150.atomic.feature.module.impl.misc.InfChatLength;
 import me.zeroX150.atomic.helper.font.FontRenderers;
 import me.zeroX150.atomic.helper.render.Renderer;
 import me.zeroX150.atomic.helper.util.Transitions;
+import me.zeroX150.atomic.helper.util.Utils;
 import me.zeroX150.atomic.mixin.game.render.ITextFieldAccessor;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -33,6 +36,7 @@ import java.awt.Color;
     @Shadow protected TextFieldWidget chatField;
     double yOffset      = 25;
     double targetOffset = 0;
+    @Shadow private String chatLastMessage;
 
     protected AChatScreenMixin(Text title) {
         super(title);
@@ -46,8 +50,8 @@ import java.awt.Color;
         boolean showExtra = maxLength != Integer.MAX_VALUE;
         double perUsed = showExtra ? ((double) cLength / maxLength) : 0;
         String v = cLength + (showExtra ? (" / " + maxLength + " " + ((int) Math.round(perUsed * 100)) + "%") : "");
-        float w = FontRenderers.mono.getStringWidth(v);
-        FontRenderers.mono.drawString(matrices, v, this.width - 2 - w, this.height - 25 + yOffset, Renderer.Util.lerp(new Color(255, 50, 50), new Color(50, 255, 50), perUsed).getRGB());
+        float w = FontRenderers.getMono().getStringWidth(v);
+        FontRenderers.getMono().drawString(matrices, v, this.width - 2 - w, this.height - 25 + yOffset, Renderer.Util.lerp(new Color(255, 50, 50), new Color(50, 255, 50), perUsed).getRGB());
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ChatScreen;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V"))
@@ -75,5 +79,17 @@ import java.awt.Color;
     @Inject(method = "init", at = @At("RETURN")) public void atomic_postInit(CallbackInfo ci) {
         this.onChatFieldUpdate("");
         targetOffset = 0;
+    }
+
+    @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ChatScreen;sendMessage(Ljava/lang/String;)V"))
+    void atomic_interceptChatMessage(ChatScreen instance, String s) {
+        if (s.startsWith(".")) { // filter all messages starting with .
+            Utils.TickManager.runInNTicks(1, () -> {
+                Atomic.client.setScreen(AtomicConsoleScreen.instance());
+                CommandRegistry.execute(s.substring(1));
+            });
+        } else {
+            instance.sendMessage(s); // else, go
+        }
     }
 }

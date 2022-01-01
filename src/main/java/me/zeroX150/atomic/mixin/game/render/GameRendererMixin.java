@@ -10,6 +10,7 @@ import me.zeroX150.atomic.feature.module.Module;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.impl.render.NoRender;
 import me.zeroX150.atomic.feature.module.impl.render.Zoom;
+import me.zeroX150.atomic.helper.ImGuiManager;
 import me.zeroX150.atomic.helper.render.Renderer;
 import me.zeroX150.atomic.helper.util.Rotations;
 import me.zeroX150.atomic.helper.util.Utils;
@@ -51,6 +52,12 @@ import java.util.Objects;
         }
     }
 
+    @Inject(method = "render", at = @At("HEAD")) void atomic_initShit(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
+        if (!ImGuiManager.isInitialized()) {
+            ImGuiManager.init();
+        }
+    }
+
     @Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true) public void atomic_stopHurtAnimation(MatrixStack matrices, float f, CallbackInfo ci) {
         if (noRender == null) {
             noRender = ModuleRegistry.getByClass(NoRender.class);
@@ -77,5 +84,6 @@ import java.util.Objects;
             ci.cancel();
         }
     }
-    
+
+
 }

@@ -21,7 +21,7 @@ public class MoonGravity extends Module {
             return;
         }
         Atomic.client.player.addVelocity(0, 0.0568000030517578, 0);
-        // yea thats literally it
+        // yea that's literally it
     }
 
     @Override public void enable() {

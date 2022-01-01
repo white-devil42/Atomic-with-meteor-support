@@ -28,8 +28,8 @@ public class Toggleable extends ButtonWidget {
     @Override public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.setMessage(Text.of(parent.getValue() ? "Enabled" : "Disabled"));
         fill(matrices, x, y, x + width, y + height, this.parent.getValue() ? Themes.currentActiveTheme.left().getRGB() : Themes.currentActiveTheme.center().getRGB());
-        FontRenderers.normal.drawCenteredString(matrices, this.getMessage()
-                .getString(), x + width / 2f, y + height / 2f - FontRenderers.normal.getFontHeight() / 2f, parent.getValue() ? 0x99FF99 : 0xFF9999);
+        FontRenderers.getNormal()
+                .drawCenteredString(matrices, this.getMessage().getString(), x + width / 2f, y + height / 2f - FontRenderers.getNormal().getFontHeight() / 2f, parent.getValue() ? 0x99FF99 : 0xFF9999);
         //        DrawableHelper.drawCenteredText(matrices, Atomic.client.textRenderer, this.getMessage(), x + (width / 2), y + (height / 2 - 9 / 2), 0xFFFFFF);
     }
 }

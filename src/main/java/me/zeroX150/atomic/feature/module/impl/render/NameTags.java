@@ -48,7 +48,7 @@ public class NameTags extends Module {
                 float health = le.getHealth();
                 double healthRounded = Utils.Math.roundToDecimal(health, 1);
                 String entireDisplay = name + healthRounded;
-                float w = FontRenderers.normal.getStringWidth(entireDisplay) + 7 + 2;
+                float w = FontRenderers.getNormal().getStringWidth(entireDisplay) + 7 + 2;
                 //w = Math.max(w, Atomic.fontRenderer.getStringWidth("a".repeat(16)) + 2);
                 float wh = w / 2f;
 
@@ -59,9 +59,11 @@ public class NameTags extends Module {
                 Color RED = new Color(255, 50, 20);
                 Color MID_END = Renderer.Util.lerp(GREEN, RED, hPer);
                 MatrixStack empty = Renderer.R3D.getEmptyMatrixStack();
-                Renderer.R2D.fill(new Color(20, 20, 20, 100), screenSpace.x - wh, screenSpace.y - FontRenderers.normal.getFontHeight() - 1, screenSpace.x + wh, screenSpace.y + 1.5);
-                FontRenderers.normal.drawString(empty, name, screenSpace.x - wh + 2, screenSpace.y - FontRenderers.normal.getFontHeight(), 0xFFFFFF);
-                FontRenderers.normal.drawString(empty, healthRounded + "", screenSpace.x + wh - 2 - FontRenderers.normal.getStringWidth(healthRounded + ""), screenSpace.y - FontRenderers.normal.getFontHeight(), MID_END.getRGB());
+                Renderer.R2D.fill(new Color(20, 20, 20, 100), screenSpace.x - wh, screenSpace.y - FontRenderers.getNormal().getFontHeight() - 1, screenSpace.x + wh, screenSpace.y + 1.5);
+                FontRenderers.getNormal().drawString(empty, name, screenSpace.x - wh + 2, screenSpace.y - FontRenderers.getNormal().getFontHeight(), 0xFFFFFF);
+                FontRenderers.getNormal()
+                        .drawString(empty, healthRounded + "", screenSpace.x + wh - 2 - FontRenderers.getNormal().getStringWidth(healthRounded + ""), screenSpace.y - FontRenderers.getNormal()
+                                .getFontHeight(), MID_END.getRGB());
                 Renderer.R2D.fillGradientH(empty, RED, MID_END, screenSpace.x - wh, screenSpace.y, screenSpace.x - wh + (wh * 2 * hPer), screenSpace.y + 1.5);
             });
         }

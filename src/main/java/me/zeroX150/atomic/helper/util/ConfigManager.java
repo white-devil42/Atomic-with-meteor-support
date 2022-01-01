@@ -91,7 +91,7 @@ import java.util.List;
                 return;
             }
             String retrv = FileUtils.readFileToString(CONFIG_FILE, Charsets.UTF_8);
-            JsonObject config = new JsonParser().parse(retrv).getAsJsonObject();
+            JsonObject config = JsonParser.parseString(retrv).getAsJsonObject();
             if (config.has("config") && config.get("config").isJsonArray()) {
                 JsonArray configArray = config.get("config").getAsJsonArray();
                 for (JsonElement jsonElement : configArray) {

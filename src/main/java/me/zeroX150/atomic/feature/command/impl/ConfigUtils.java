@@ -17,7 +17,6 @@ import me.zeroX150.atomic.feature.module.ModuleRegistry;
 import me.zeroX150.atomic.feature.module.config.DynamicValue;
 import me.zeroX150.atomic.helper.keybind.KeybindManager;
 import me.zeroX150.atomic.helper.util.TypeConverter;
-import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ConfigUtils extends Command {
 
@@ -37,24 +37,33 @@ public class ConfigUtils extends Command {
         super("ConfigUtils", "config file management", "configUtils", "confu", "cu");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"load", "save"};
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("load")) {
+            return Arrays.stream(Objects.requireNonNull(Atomic.CONFIG_STORAGE.listFiles())).map(File::getName).collect(Collectors.toList()).toArray(String[]::new);
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
-            Utils.Client.sendMessage("I need an action, load or save");
+            error("I need an action, load or save");
             return;
         }
         switch (args[0].toLowerCase()) {
             case "load" -> {
                 if (args.length < 2) {
-                    Utils.Client.sendMessage("I need you to specify a file name of the config");
+                    error("I need you to specify a file name of the config");
                     return;
                 }
                 File f = new File(Atomic.CONFIG_STORAGE.getAbsolutePath() + "/" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                 if (!f.exists()) {
-                    Utils.Client.sendMessage("That file doesnt exist");
+                    error("That file doesnt exist");
                     return;
                 }
                 if (!f.isFile()) {
-                    Utils.Client.sendMessage("That's not a file");
+                    error("That's not a file");
                     return;
                 }
                 try {
@@ -64,13 +73,13 @@ public class ConfigUtils extends Command {
                         }
                     }
                     String config = FileUtils.readFileToString(f, Charsets.UTF_8);
-                    JsonObject root = new JsonParser().parse(config).getAsJsonObject();
+                    JsonObject root = JsonParser.parseString(config).getAsJsonObject();
                     for (JsonElement jsonElement : root.get("config").getAsJsonArray()) {
                         JsonObject current = jsonElement.getAsJsonObject();
                         String moduleName = current.get("name").getAsString();
                         Module m = ModuleRegistry.getByName(moduleName);
                         if (m == null) {
-                            Utils.Client.sendMessage("[Warning] Config includes invalid module name \"" + moduleName + "\"");
+                            warn("Config includes invalid module name \"" + moduleName + "\"");
                             continue;
                         }
                         for (JsonElement pairs : current.get("pairs").getAsJsonArray()) {
@@ -91,7 +100,7 @@ public class ConfigUtils extends Command {
                         String n = enabled.getAsString();
                         Module m = ModuleRegistry.getByName(n);
                         if (m == null) {
-                            Utils.Client.sendMessage("[Warning] Config includes invalid module name \"" + n + "\"");
+                            warn("Config includes invalid module name \"" + n + "\"");
                             continue;
                         }
                         shouldBeEnabled.add(m);
@@ -104,22 +113,25 @@ public class ConfigUtils extends Command {
                             module.setEnabled(false);
                         }
                     }
-                    Utils.Client.sendMessage("Reloading keybind manager");
                     KeybindManager.reload();
-                    Utils.Client.sendMessage("Loaded config file!");
+                    success("Reloaded keybind manager");
+                    success("Loaded config file!");
                 } catch (Exception e) {
-                    Utils.Client.sendMessage("Couldn't load config: " + e.getLocalizedMessage());
+                    error("Couldn't load config: " + e.getLocalizedMessage());
                 }
             }
             case "save" -> {
                 if (args.length < 2) {
-                    Utils.Client.sendMessage("I need the output file name");
+                    error("I need the output file name");
                     return;
                 }
                 File out = new File(Atomic.CONFIG_STORAGE.getAbsolutePath() + "/" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                 if (out.exists()) {
-                    Utils.Client.sendMessage("That file already exists");
-                    return;
+                    warn("Overwriting file because it already exists");
+                    if (!out.delete()) {
+                        error("Failed to delete old file! Aborting");
+                        return;
+                    }
                 }
                 try {
                     JsonObject base = new JsonObject();
@@ -159,10 +171,10 @@ public class ConfigUtils extends Command {
                     t.setStyle(s);
                     Objects.requireNonNull(Atomic.client.player).sendMessage(t, false);
                 } catch (Exception e) {
-                    Utils.Client.sendMessage("Couldn't save config: " + e.getLocalizedMessage());
+                    error("Couldn't save config: " + e.getLocalizedMessage());
                 }
             }
-            default -> Utils.Client.sendMessage("invalid action, need either load or save");
+            default -> error("Invalid action, need either load or save");
         }
     }
 }

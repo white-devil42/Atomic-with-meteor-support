@@ -120,7 +120,7 @@ public class ProxyManagerScreen extends Screen implements FastTickable {
         DrawableHelper.fill(Renderer.R3D.getEmptyMatrixStack(), 0, 0, width, height, new Color(0, 0, 0, (int) (animProg * 50)).getRGB());
         DrawableHelper.fill(matrices, getW() - 100, getH() - 75, getW() + 100, getH() + 75, Renderer.Util.modify(Themes.currentActiveTheme.center(), -1, -1, -1, 170).getRGB());
 
-        FontRenderers.normal.drawCenteredString(matrices, "Proxy manager" + (currentProxy == null ? "" : " (Using proxy)"), getW(), getH() - 70, 0xFFFFFF);
+        FontRenderers.getNormal().drawCenteredString(matrices, "Proxy manager" + (currentProxy == null ? "" : " (Using proxy)"), getW(), getH() - 70, 0xFFFFFF);
         super.render(matrices, mouseX, mouseY, delta);
     }
 

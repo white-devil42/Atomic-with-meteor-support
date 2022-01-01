@@ -120,7 +120,7 @@ public class SimpleCustomTextFieldWidget extends ClickableWidget implements Draw
             rStartIndex = 0;
         }
         String v1 = text.substring(rStartIndex);
-        while (FontRenderers.mono.getStringWidth(v1) > width) {
+        while (FontRenderers.getMono().getStringWidth(v1) > width) {
             if (v1.isEmpty()) {
                 break;
             }
@@ -128,8 +128,8 @@ public class SimpleCustomTextFieldWidget extends ClickableWidget implements Draw
         }
         Color c = Themes.currentActiveTheme.center();
         Color c1 = new Color((int) Math.floor(Math.abs(255 - c.getRed())), (int) Math.floor(Math.abs(255 - c.getGreen())), (int) Math.floor(Math.abs(255 - c.getBlue())), 255);
-        FontRenderers.mono.drawString(matrices, v1, x + 1, y + (height / 2f) - (FontRenderers.mono.getFontHeight() / 2f), c1.getRGB());
-        float w = text.isEmpty() ? 0 : FontRenderers.mono.getStringWidth(text.substring(rStartIndex, cursorIndex));
+        FontRenderers.getMono().drawString(matrices, v1, x + 1, y + (height / 2f) - (FontRenderers.getMono().getFontHeight() / 2f), c1.getRGB());
+        float w = text.isEmpty() ? 0 : FontRenderers.getMono().getStringWidth(text.substring(rStartIndex, cursorIndex));
 
         float v = (System.currentTimeMillis() % 1000) / 1000f;
         double opacity = Math.sin(v * Math.PI);

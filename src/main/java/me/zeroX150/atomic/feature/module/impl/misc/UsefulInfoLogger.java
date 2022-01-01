@@ -70,25 +70,25 @@ public class UsefulInfoLogger extends Module {
                 int id = ((IReasonAccessor) packet.getReason()).getId();
                 boolean exists = REASON_MAPPINGS.containsKey(id);
                 String reason = exists ? REASON_MAPPINGS.get(id) : "Unknown reason";
-                Utils.Client.sendMessage("[UIL] [Game state change] Game state changed: " + reason);
+                Utils.Logging.messageChat("[UIL] [Game state change] Game state changed: " + reason);
             }
             if (p instanceof CommandTreeS2CPacket packet && showCommandTreeArrival.getValue()) {
-                Utils.Client.sendMessage("[UIL] [Command tree packet] Command tree packet arrived with " + packet.getCommandTree().getChildren().size() + " commands.");
+                Utils.Logging.messageChat("[UIL] [Command tree packet] Command tree packet arrived with " + packet.getCommandTree().getChildren().size() + " commands.");
             }
             if (p instanceof EnterCombatS2CPacket && showEngageInCombat.getValue()) {
-                Utils.Client.sendMessage("[UIL] [Combat update] The server considers you now in combat");
+                Utils.Logging.messageChat("[UIL] [Combat update] The server considers you now in combat");
             }
             if (p instanceof EndCombatS2CPacket && showEndCombat.getValue()) {
-                Utils.Client.sendMessage("[UIL] [Combat update] The server considers you now no longer in combat");
+                Utils.Logging.messageChat("[UIL] [Combat update] The server considers you now no longer in combat");
             }
             if (p instanceof DifficultyS2CPacket packet && showDifficultyChange.getValue()) {
                 Difficulty d = packet.getDifficulty();
-                Utils.Client.sendMessage("[UIL] [Difficulty change] The server is now on " + d.getName() + " difficulty");
+                Utils.Logging.messageChat("[UIL] [Difficulty change] The server is now on " + d.getName() + " difficulty");
             }
             if (p instanceof WorldBorderCenterChangedS2CPacket packet && showWorldBorderCenterChange.getValue()) {
                 double centerX = Math.floor(packet.getCenterX());
                 double centerZ = Math.floor(packet.getCenterZ());
-                Utils.Client.sendMessage("[UIL] [World border center change] The world border center is now at X " + centerX + ", Z " + centerZ);
+                Utils.Logging.messageChat("[UIL] [World border center change] The world border center is now at X " + centerX + ", Z " + centerZ);
                 renders.add(new AnimatedRenderablePos(new CustomColor(255, 255, 255, true), new CustomColor(0, 0, 0, 0), new Vec3d(centerX, 0, centerZ), new Vec3d(1, 255, 1), 10000));
             }
         });

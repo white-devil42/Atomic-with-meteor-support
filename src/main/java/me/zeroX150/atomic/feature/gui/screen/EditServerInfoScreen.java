@@ -70,7 +70,7 @@ public class EditServerInfoScreen extends Screen {
 
     @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
-        FontRenderers.title.drawString(matrices, "Server Editor", 5, 5, 0xFFFFFF);
+        FontRenderers.getTitle().drawString(matrices, "Server Editor", 5, 5, 0xFFFFFF);
         List<String> texts = new ArrayList<>();
         texts.add("How to use");
         texts.add("Use & color codes for styling");
@@ -81,13 +81,13 @@ public class EditServerInfoScreen extends Screen {
         texts.add("");
         texts.add("Syntax for player count: players/max players");
         texts.add("Examples: 1/2, 3/4, 5/10, 69/420, 420/69");
-        int yOff = FontRenderers.title.getFontHeight() + 1;
+        int yOff = (int) (FontRenderers.getTitle().getFontHeight() + 1);
         for (String text : texts) {
-            FontRenderers.mono.drawString(matrices, text, 5, yOff, 0xFFFFFF);
-            yOff += FontRenderers.mono.getFontHeight();
+            FontRenderers.getMono().drawString(matrices, text, 5, yOff, 0xFFFFFF);
+            yOff += FontRenderers.getMono().getFontHeight();
         }
-        FontRenderers.normal.drawString(matrices, motd.getText().isEmpty() ? "" : "Server MOTD", width / 2f - 100, height / 2f - 35, 0xFFFFFF);
-        FontRenderers.normal.drawString(matrices, pcount.getText().isEmpty() ? "" : "Player count", width / 2f - 100, height / 2f - 4, 0xFFFFFF);
+        FontRenderers.getNormal().drawString(matrices, motd.getText().isEmpty() ? "" : "Server MOTD", width / 2f - 100, height / 2f - 35, 0xFFFFFF);
+        FontRenderers.getNormal().drawString(matrices, pcount.getText().isEmpty() ? "" : "Player count", width / 2f - 100, height / 2f - 4, 0xFFFFFF);
         super.render(matrices, mouseX, mouseY, delta);
     }
 }

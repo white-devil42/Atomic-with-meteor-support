@@ -115,17 +115,18 @@ public class ColorConfig extends ClickableWidget {
             blue.render(matrices, mouseX, mouseY, delta);
             isRGB.render(matrices, mouseX, mouseY, delta);
             Renderer.R2D.fill(matrices, Themes.currentActiveTheme.center(), x - width - padding, y - 36, x - width - padding + 10, y + height);
-            FontRenderers.mono.drawCenteredString(matrices, "R", red.x - 4.5f, red.y + (red.getHeight() / 2f - FontRenderers.mono.getFontHeight() / 2f), 0xFFAAAA);
-            FontRenderers.mono.drawCenteredString(matrices, "G", green.x - 4.5f, green.y + (green.getHeight() / 2f - FontRenderers.mono.getFontHeight() / 2f), 0xAAFFAA);
-            FontRenderers.mono.drawCenteredString(matrices, "B", blue.x - 4.5f, blue.y + (blue.getHeight() / 2f - FontRenderers.mono.getFontHeight() / 2f), 0xAAAAFF);
-            FontRenderers.mono.drawCenteredString(matrices, "C", isRGB.x - 4.5f, isRGB.y + (isRGB.getHeight() / 2f - FontRenderers.mono.getFontHeight() / 2f), Utils.getCurrentRGB().getRGB());
+            FontRenderers.getMono().drawCenteredString(matrices, "R", red.x - 4.5f, red.y + (red.getHeight() / 2f - FontRenderers.getMono().getFontHeight() / 2f), 0xFFAAAA);
+            FontRenderers.getMono().drawCenteredString(matrices, "G", green.x - 4.5f, green.y + (green.getHeight() / 2f - FontRenderers.getMono().getFontHeight() / 2f), 0xAAFFAA);
+            FontRenderers.getMono().drawCenteredString(matrices, "B", blue.x - 4.5f, blue.y + (blue.getHeight() / 2f - FontRenderers.getMono().getFontHeight() / 2f), 0xAAAAFF);
+            FontRenderers.getMono()
+                    .drawCenteredString(matrices, "C", isRGB.x - 4.5f, isRGB.y + (isRGB.getHeight() / 2f - FontRenderers.getMono().getFontHeight() / 2f), Utils.getCurrentRGB().getRGB());
         }
         Renderer.R2D.fill(matrices, c, x, y, x + width, y + height);
         String rHex = Integer.toHexString(c.getRed());
         String gHex = Integer.toHexString(c.getGreen());
         String bHex = Integer.toHexString(c.getBlue());
         String v = "#" + rHex + gHex + bHex;
-        FontRenderers.mono.drawCenteredString(matrices, v, x + (width / 2f), y + 2, new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue()).getRGB());
+        FontRenderers.getMono().drawCenteredString(matrices, v, x + (width / 2f), y + 2, new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue()).getRGB());
         //super.renderButton(matrices, mouseX, mouseY, delta);
     }
 

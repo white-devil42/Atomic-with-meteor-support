@@ -56,7 +56,7 @@ public class NotificationRenderer {
         float minWidth = 50;
         long c = System.currentTimeMillis();
         ArrayList<Notification> nf = new ArrayList<>(topBarNotifications);
-        nf.sort(Comparator.comparingDouble(value -> -FontRenderers.normal.getStringWidth(String.join(" ", value.contents))));
+        nf.sort(Comparator.comparingDouble(value -> -FontRenderers.getNormal().getStringWidth(String.join(" ", value.contents))));
         for (Notification notification : nf) {
             double timeRemaining = Math.abs(c - notification.creationDate - notification.duration) / (double) notification.duration;
             timeRemaining = MathHelper.clamp(timeRemaining, 0, 1);
@@ -85,14 +85,14 @@ public class NotificationRenderer {
             }
             notification.shouldDoAnimation = notification.animationGoal != notification.animationProgress;
             String contents = String.join(" ", notification.contents);
-            float width = FontRenderers.normal.getStringWidth(contents) + 5;
+            float width = FontRenderers.getNormal().getStringWidth(contents) + 5;
             width = width / 2f;
             width = Math.max(minWidth, width);
             float pad = 1;
             width += pad;
             Renderer.R2D.fill(ms, new Color(28, 28, 28, 200), notification.renderPosX - width, notification.renderPosY, notification.renderPosX - width + pad + (width * 2 * notification.animationProgress), notification.renderPosY + height);
             Renderer.R2D.scissor(notification.renderPosX - width + pad, notification.renderPosY, (width * 2 * notification.animationProgress), height + 1);
-            FontRenderers.normal.drawCenteredString(ms, contents, notification.renderPosX, notification.renderPosY + height / 2f - FontRenderers.normal.getFontHeight() / 2f, 0xFFFFFF);
+            FontRenderers.getNormal().drawCenteredString(ms, contents, notification.renderPosX, notification.renderPosY + height / 2f - FontRenderers.getNormal().getFontHeight() / 2f, 0xFFFFFF);
             Color GREEN = new Color(100, 255, 20);
             Color RED = new Color(255, 50, 20);
             double timeRemainingInv = 1 - timeRemaining;
@@ -125,7 +125,7 @@ public class NotificationRenderer {
             double timeRemaining = Math.abs(c - notification.creationDate - notification.duration) / (double) notification.duration;
             timeRemaining = MathHelper.clamp(timeRemaining, 0, 1);
             boolean notificationExpired = notification.creationDate + notification.duration < c;
-            int notifHeight = 2 + ((notification.contents.length + (notification.title.isEmpty() ? 0 : 1)) * FontRenderers.normal.getFontHeight());
+            int notifHeight = (int) (2 + ((notification.contents.length + (notification.title.isEmpty() ? 0 : 1)) * FontRenderers.getNormal().getFontHeight()));
             currentYOffset += notifHeight + 2;
             notification.posY = baseY - currentYOffset;
             if (!notificationExpired) {
@@ -147,11 +147,11 @@ public class NotificationRenderer {
             Color GREEN = new Color(100, 255, 20);
             Color RED = new Color(255, 50, 20);
             Renderer.R2D.fill(Renderer.Util.lerp(GREEN, RED, timeRemaining), notification.renderPosX + 150, notification.renderPosY, notification.renderPosX + 150 + 1, notification.renderPosY + ((1 - timeRemaining) * notifHeight));
-            int currentYOffsetText = 1 + FontRenderers.normal.getFontHeight();
-            FontRenderers.normal.drawString(ms, notification.title, notification.renderPosX + 2, notification.renderPosY + 1, 0xFFFFFF);
+            int currentYOffsetText = (int) (1 + FontRenderers.getNormal().getFontHeight());
+            FontRenderers.getNormal().drawString(ms, notification.title, notification.renderPosX + 2, notification.renderPosY + 1, 0xFFFFFF);
             for (String content : notification.contents) {
-                FontRenderers.normal.drawString(ms, content, notification.renderPosX + 2, notification.renderPosY + currentYOffsetText, 0xFFFFFF);
-                currentYOffsetText += FontRenderers.normal.getFontHeight();
+                FontRenderers.getNormal().drawString(ms, content, notification.renderPosX + 2, notification.renderPosY + currentYOffsetText, 0xFFFFFF);
+                currentYOffsetText += FontRenderers.getNormal().getFontHeight();
             }
         }
     }

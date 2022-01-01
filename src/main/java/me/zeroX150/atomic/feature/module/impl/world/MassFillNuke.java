@@ -39,8 +39,8 @@ public class MassFillNuke extends Module {
     }
 
     void execute() {
-        Utils.Client.sendMessage("Pre-filtering chunks...");
-        for (int y = 245; y > 0; y -= 20) {
+        Utils.Logging.messageChat("Pre-filtering chunks...");
+        for (int y = Atomic.client.world.getTopY(); y > Atomic.client.world.getBottomY(); y -= 20) {
             for (int x = -255; x < 255; x += 20) {
                 for (int z = -255; z < 255; z += 20) {
                     if (!run) {
@@ -50,7 +50,7 @@ public class MassFillNuke extends Module {
                         setEnabled(false);
                         return;
                     }
-                    Utils.sleep(1);
+                    //                    Utils.sleep(1);
                     Vec3d o = startPos.add(x, 0, z);
                     BlockPos pos = new BlockPos(o.x, y, o.z);
                     last = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
@@ -79,9 +79,9 @@ public class MassFillNuke extends Module {
                 }
             }
         }
-        Utils.Client.sendMessage("Executing...");
+        Utils.Logging.messageChat("Executing...");
         Utils.sleep(1000);
-        for (int y = 245; y > 0; y -= 20) {
+        for (int y = Atomic.client.world.getTopY() - 10; y > Atomic.client.world.getBottomY(); y -= 20) {
             for (int x = -255; x < 255; x += 20) {
                 for (int z = -255; z < 255; z += 20) {
                     if (!run) {

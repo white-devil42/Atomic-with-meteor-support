@@ -10,11 +10,12 @@ import java.awt.Color;
 
 public abstract class HudElement {
 
-    static MatrixStack stack = new MatrixStack();
+    static final MatrixStack stack = new MatrixStack();
+    final        double      width;
+    final        double      height;
+    final        String      id;
     double posX, posY;
-    double width, height;
     boolean selected = false;
-    String  id;
 
     public HudElement(String id, double x, double y, double w, double h) {
         this.posX = x;
@@ -61,11 +62,11 @@ public abstract class HudElement {
         Renderer.R2D.gradientLineScreen(v3, v4, posX + width, posY + height, posX, posY + height);
         Renderer.R2D.gradientLineScreen(v4, v1, posX, posY + height, posX, posY);
 
-        double rpoY = posY - FontRenderers.normal.getFontHeight();
-        if (posY < FontRenderers.normal.getFontHeight()) { // too small to render text properly
+        double rpoY = posY - FontRenderers.getNormal().getFontHeight();
+        if (posY < FontRenderers.getNormal().getFontHeight()) { // too small to render text properly
             rpoY = posY + height;
         }
-        FontRenderers.normal.drawString(Renderer.R3D.getEmptyMatrixStack(), id, posX, rpoY, 0xFFFFFF);
+        FontRenderers.getNormal().drawString(Renderer.R3D.getEmptyMatrixStack(), id, posX, rpoY, 0xFFFFFF);
     }
 
     public abstract void renderIntern(MatrixStack stack);

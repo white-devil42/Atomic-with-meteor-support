@@ -5,14 +5,20 @@
 
 package me.zeroX150.atomic;
 
+import me.zeroX150.atomic.feature.command.CommandRegistry;
 import me.zeroX150.atomic.feature.command.impl.ItemStorage;
 import me.zeroX150.atomic.feature.gui.clickgui.Themes;
 import me.zeroX150.atomic.feature.gui.notifications.NotificationRenderer;
 import me.zeroX150.atomic.feature.gui.screen.FastTickable;
 import me.zeroX150.atomic.feature.module.Module;
 import me.zeroX150.atomic.feature.module.ModuleRegistry;
+import me.zeroX150.atomic.helper.event.EventType;
+import me.zeroX150.atomic.helper.event.Events;
+import me.zeroX150.atomic.helper.event.events.PostInitEvent;
 import me.zeroX150.atomic.helper.font.FontRenderers;
-import me.zeroX150.atomic.helper.font.GlyphPageFontRenderer;
+import me.zeroX150.atomic.helper.font.adapter.impl.ClientFontRenderer;
+import me.zeroX150.atomic.helper.font.adapter.impl.VanillaFontRenderer;
+import me.zeroX150.atomic.helper.font.render.GlyphPageFontRenderer;
 import me.zeroX150.atomic.helper.keybind.KeybindManager;
 import me.zeroX150.atomic.helper.manager.CapeManager;
 import me.zeroX150.atomic.helper.util.ConfigManager;
@@ -52,9 +58,10 @@ public class Atomic implements ModInitializer {
     }
 
     void initFonts() {
-        FontRenderers.normal = GlyphPageFontRenderer.createFromID("Font.ttf", 17, false, false, false);
-        FontRenderers.title = GlyphPageFontRenderer.createFromID("Font.ttf", 25, false, false, false);
-        FontRenderers.mono = GlyphPageFontRenderer.createFromID("Mono.ttf", 17, false, false, false);
+        FontRenderers.setNormal(new ClientFontRenderer(GlyphPageFontRenderer.createFromID("Font.ttf", 17, false, false, false)));
+        FontRenderers.setTitle(new ClientFontRenderer(GlyphPageFontRenderer.createFromID("Font.ttf", 25, false, false, false)));
+        FontRenderers.setMono(new ClientFontRenderer(GlyphPageFontRenderer.createFromID("Mono.ttf", 17, false, false, false)));
+        FontRenderers.setVanilla(new VanillaFontRenderer());
     }
 
     void initGroups() {
@@ -102,7 +109,7 @@ public class Atomic implements ModInitializer {
             while (true) {
                 Utils.sleep(10);
                 tickGuiSystem(); // ticks gui elements
-                Themes.tickThemes(); // ticks themes
+                Themes.tickThemes(); // Tick themes
                 if (Atomic.client.player == null || Atomic.client.world == null) {
                     continue;
                 }
@@ -112,6 +119,9 @@ public class Atomic implements ModInitializer {
         MODULE_FTTICKER.start();
         FAST_TICKER.start();
         ModuleRegistry.sortModulesPostInit();
+        CommandRegistry.init();
+        System.out.println("sending post init");
+        Events.fireEvent(EventType.POST_INIT, new PostInitEvent());
     }
 
     void tickModulesNWC() {

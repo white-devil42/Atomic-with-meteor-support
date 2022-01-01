@@ -34,7 +34,7 @@ public class Velocity extends Module {
             PacketEvent pe = (PacketEvent) event;
             if (pe.getPacket() instanceof EntityVelocityUpdateS2CPacket packet && packet.getId() == Atomic.client.player.getId()) {
                 if (mode.getValue().equalsIgnoreCase("modify")) {
-                    double velX = packet.getVelocityX() / 8000d; // dont ask me why they did this
+                    double velX = packet.getVelocityX() / 8000d; // don't ask me why they did this
                     double velY = packet.getVelocityY() / 8000d;
                     double velZ = packet.getVelocityZ() / 8000d;
                     velX *= multiplierX.getValue();

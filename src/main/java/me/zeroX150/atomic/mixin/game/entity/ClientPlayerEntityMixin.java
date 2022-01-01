@@ -43,10 +43,6 @@ import java.util.Objects;
                 module.tick();
             }
         }
-        //        if (!calledInit) {
-        //            calledInit = true;
-        //            Utils.TickManager.runInNTicks(10, ImGuiManager::init);
-        //        }
     }
 
     @Redirect(method = "updateNausea", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;isPauseScreen()Z")) public boolean atomic_overwriteIsPauseScreen(Screen screen) {

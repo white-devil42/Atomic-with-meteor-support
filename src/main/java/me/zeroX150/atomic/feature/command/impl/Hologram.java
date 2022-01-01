@@ -8,7 +8,6 @@ package me.zeroX150.atomic.feature.command.impl;
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.command.Command;
 import me.zeroX150.atomic.helper.manager.HologramManager;
-import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -22,9 +21,19 @@ public class Hologram extends Command {
         super("Hologram", "generate a hologram", "hologram", "holo", "hlg");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"(flags)"};
+        }
+        if (args.length == 2) {
+            return new String[]{"(message)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length < 2) {
-            Utils.Client.sendMessage("i need options and text pls. example: \".hologram eb your text\". specify option \"h\" to show help");
+            message("i need options and text pls. example: \".hologram eb your text\". specify option \"h\" to show help");
             return;
         }
         String options = args[0].toLowerCase();
@@ -43,13 +52,13 @@ public class Hologram extends Command {
                 case 'n' -> {
                 }
                 default -> {
-                    Utils.Client.sendMessage("Unknown option \"" + c + "\". Valid options:");
-                    Utils.Client.sendMessage("  N = None (Placeholder)");
-                    Utils.Client.sendMessage("  E = Makes a spawn egg instead of an armor stand item");
-                    Utils.Client.sendMessage("  B = Makes the hologram entity small");
-                    Utils.Client.sendMessage("  G = Makes the hologram have gravity");
-                    Utils.Client.sendMessage("  V = Makes the hologram entity visible");
-                    Utils.Client.sendMessage("  M = Makes the hologram entity not a marker (enable interactions and hitbox)");
+                    error("Unknown option \"" + c + "\". Valid options:");
+                    message("  N = None (Placeholder)");
+                    message("  E = Makes a spawn egg instead of an armor stand item");
+                    message("  B = Makes the hologram entity small");
+                    message("  G = Makes the hologram have gravity");
+                    message("  V = Makes the hologram entity visible");
+                    message("  M = Makes the hologram entity not a marker (enable interactions and hitbox)");
                     return;
                 }
             }
@@ -57,17 +66,17 @@ public class Hologram extends Command {
         String text = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         Vec3d pos = Objects.requireNonNull(Atomic.client.player).getPos();
         BlockPos displayable = Atomic.client.player.getBlockPos();
-        Utils.Client.sendMessage("Armor stand config:");
-        Utils.Client.sendMessage("  Text: " + text);
-        Utils.Client.sendMessage("  Is baby: " + (generateAsBaby ? "Yes" : "No"));
-        Utils.Client.sendMessage("  Is egg: " + (generateAsEgg ? "Yes" : "No"));
-        Utils.Client.sendMessage("  Is invisible: " + (!makeVisible ? "Yes" : "No"));
-        Utils.Client.sendMessage("  Has gravity: " + (makeGravity ? "Yes" : "No"));
-        Utils.Client.sendMessage("  Is marker: " + (marker ? "Yes" : "No"));
-        Utils.Client.sendMessage("  Pos: " + displayable.getX() + ", " + displayable.getY() + ", " + displayable.getZ());
+        message("Armor stand config:");
+        message("  Text: " + text);
+        message("  Is baby: " + (generateAsBaby ? "Yes" : "No"));
+        message("  Is egg: " + (generateAsEgg ? "Yes" : "No"));
+        message("  Is invisible: " + (!makeVisible ? "Yes" : "No"));
+        message("  Has gravity: " + (makeGravity ? "Yes" : "No"));
+        message("  Is marker: " + (marker ? "Yes" : "No"));
+        message("  Pos: " + displayable.getX() + ", " + displayable.getY() + ", " + displayable.getZ());
         HologramManager.Hologram h = HologramManager.generateDefault(text, pos).isEgg(generateAsEgg).isSmall(generateAsBaby).hasGravity(makeGravity).isVisible(makeVisible).isMarker(marker);
         ItemStack stack = h.generate();
-        Utils.Client.sendMessage("Dont forget to open your inventory before placing");
+        message("Dont forget to open your inventory before placing");
         Atomic.client.player.getInventory().addPickBlock(stack);
     }
 }

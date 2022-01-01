@@ -13,7 +13,6 @@ import me.zeroX150.atomic.feature.gui.particles.FlowParticleManager;
 import me.zeroX150.atomic.feature.module.impl.client.ClientConfig;
 import me.zeroX150.atomic.helper.font.FontRenderers;
 import me.zeroX150.atomic.helper.util.Utils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -35,8 +34,7 @@ import java.util.Objects;
 public class HomeScreen extends Screen {
 
     final FlowParticleManager pm = new FlowParticleManager(100);
-    String  t;
-    boolean isMeteorLoaded = false;
+    String t;
 
     public HomeScreen() {
         super(Text.of("a"));
@@ -55,7 +53,7 @@ public class HomeScreen extends Screen {
         addDrawableChild(createCentered("Realms", height / 2, button -> Atomic.client.setScreen(new RealmsMainScreen(this))));
         addDrawableChild(new ButtonWidget(width / 2 - 75, height / 2 + 25, 70, 20, Text.of("Options"), button -> Atomic.client.setScreen(new OptionsScreen(this, Atomic.client.options))));
         addDrawableChild(new ButtonWidget(width / 2 + 5, height / 2 + 25, 70, 20, Text.of("Quit"), button -> Atomic.client.stop()));
-        addDrawableChild(new ButtonWidget(width / 2 - (150 / 2), height / 2 + 25 + 25, 150, 20, Text.of("Alts"), button -> Atomic.client.setScreen(NewAltManagerScreen.getInstance())));
+        addDrawableChild(new ButtonWidget(width / 2 - (150 / 2), height / 2 + 25 + 25, 150, 20, Text.of("Alts"), button -> Atomic.client.setScreen(NewAltManagerScreen.instance())));
         addDrawableChild(new ButtonWidget(1, 1, 130, 20, Text.of("Vanilla home screen"), button -> {
             ClientConfig.customMainMenu.setValue(false);
             Atomic.client.setScreen(null);
@@ -63,7 +61,6 @@ public class HomeScreen extends Screen {
             //Test.real();
         }));
         super.init();
-        isMeteorLoaded = FabricLoader.getInstance().isModLoaded("meteor-client");
     }
 
     @Override public void tick() {
@@ -91,8 +88,8 @@ public class HomeScreen extends Screen {
         drawTexture(matrices, (int) (width / 2 - (504 * logoSize / 2)), 10, 0, 0, 0, (int) (504 * logoSize), (int) (130 * logoSize), (int) (504 * logoSize), (int) (130 * logoSize));
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
-        FontRenderers.normal.drawString(matrices, t, 1, height - FontRenderers.normal.getFontHeight(), 0xFFFFFF);
-        FontRenderers.normal.drawString(matrices, "0x150", 1 + FontRenderers.normal.getStringWidth(t), height - FontRenderers.normal.getFontHeight(), Utils.getCurrentRGB().getRGB());
+        FontRenderers.getNormal().drawString(matrices, t, 1, height - FontRenderers.getNormal().getFontHeight(), 0xFFFFFF);
+        FontRenderers.getNormal().drawString(matrices, "0x150", 1 + FontRenderers.getNormal().getStringWidth(t), height - FontRenderers.getNormal().getFontHeight(), Utils.getCurrentRGB().getRGB());
         super.render(matrices, mouseX, mouseY, delta);
     }
 
@@ -101,8 +98,8 @@ public class HomeScreen extends Screen {
     }
 
     @Override public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        float width = FontRenderers.normal.getStringWidth(t);
-        float mwidth = width + FontRenderers.normal.getStringWidth("0x150");
+        float width = FontRenderers.getNormal().getStringWidth(t);
+        float mwidth = width + FontRenderers.getNormal().getStringWidth("0x150");
         float h = height - 10;
         float m = height - 1;
         if (mouseX >= width && mouseX <= mwidth && mouseY >= h && mouseY <= m) {

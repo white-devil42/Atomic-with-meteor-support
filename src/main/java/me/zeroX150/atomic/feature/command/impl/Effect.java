@@ -17,30 +17,43 @@ public class Effect extends Command {
         super("Effect", "gives you an effect client side", "effect", "eff");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"give", "clear"};
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
+            return new String[]{"(effect id) (duration) (strength)"};
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
+            return new String[]{"(duration) (strength)"};
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("give")) {
+            return new String[]{"(strength)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (Atomic.client.player == null) {
             return;
         }
         if (args.length == 0) {
-            Utils.Client.sendMessage("action please");
+            error("action please");
             return;
         }
         switch (args[0].toLowerCase()) {
             case "give" -> {
                 if (args.length < 4) {
-                    Utils.Client.sendMessage("effect id, duration and strength pls");
+                    error("effect id, duration and strength pls");
                     return;
                 }
                 int id = Utils.Math.tryParseInt(args[1], -1);
                 if (id == -1) {
-                    Utils.Client.sendMessage("idk about that status effect ngl");
+                    error("idk about that status effect ngl");
                     return;
                 }
                 int duration = Utils.Math.tryParseInt(args[2], 30);
                 int strength = Utils.Math.tryParseInt(args[3], 1);
                 StatusEffect effect = StatusEffect.byRawId(id);
                 if (effect == null) {
-                    Utils.Client.sendMessage("idk about that status effect ngl");
+                    error("idk about that status effect ngl");
                     return;
                 }
                 StatusEffectInstance inst = new StatusEffectInstance(effect, duration, strength);
@@ -51,7 +64,7 @@ public class Effect extends Command {
                     Atomic.client.player.removeStatusEffect(statusEffect.getEffectType());
                 }
             }
-            default -> Utils.Client.sendMessage("\"give\" and \"clear\" only pls");
+            default -> error("\"give\" and \"clear\" only pls");
         }
     }
 }

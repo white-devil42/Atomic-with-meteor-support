@@ -12,13 +12,13 @@ import net.minecraft.util.math.Vec3d;
 
 public class LongJump extends Module {
 
-    SliderValue  xz            = (SliderValue) this.config.create("Speed", 5, 0, 20, 2).description("How fast to yeet forwards");
-    MultiValue   focus         = (MultiValue) this.config.create("Focus on", "Direction", "Direction", "Velocity").description("What to look at when applying longjump");
-    BooleanValue glide         = (BooleanValue) this.config.create("Glide", true).description("Whether or not to glide when falling from a jump");
-    SliderValue  glideVelocity = (SliderValue) this.config.create("Glide velocity", 0.05, -0.08, 0.07, 2).description("How much upwards velocity to apply while gliding");
-    BooleanValue keepApplying  = (BooleanValue) this.config.create("Keep applying", true).description("Whether or not to keep applying the effect when falling from a jump");
-    SliderValue  applyStrength = (SliderValue) this.config.create("Apply strength", 0.3, 0.01, 0.3, 3).description("How strong the effect should be when applying in post");
-    boolean      jumped        = false;
+    final SliderValue  xz            = (SliderValue) this.config.create("Speed", 5, 0, 20, 2).description("How fast to yeet forwards");
+    final MultiValue   focus         = (MultiValue) this.config.create("Focus on", "Direction", "Direction", "Velocity").description("What to look at when applying longjump");
+    final BooleanValue glide         = (BooleanValue) this.config.create("Glide", true).description("Whether or not to glide when falling from a jump");
+    final SliderValue  glideVelocity = (SliderValue) this.config.create("Glide velocity", 0.05, -0.08, 0.07, 2).description("How much upwards velocity to apply while gliding");
+    final BooleanValue keepApplying  = (BooleanValue) this.config.create("Keep applying", true).description("Whether or not to keep applying the effect when falling from a jump");
+    final SliderValue  applyStrength = (SliderValue) this.config.create("Apply strength", 0.3, 0.01, 0.3, 3).description("How strong the effect should be when applying in post");
+    boolean jumped = false;
 
     public LongJump() {
         super("LongJump", "Jumps a long distance", ModuleType.MOVEMENT);

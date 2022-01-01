@@ -19,7 +19,7 @@ public class SimpleTextWidget extends ClickableWidget {
     boolean center = false;
 
     public SimpleTextWidget(double x, double y, String text, int color) {
-        super((int) x, (int) y, FontRenderers.normal.getStringWidth(text), 8, Text.of(""));
+        super((int) x, (int) y, (int) FontRenderers.getNormal().getStringWidth(text), 8, Text.of(""));
         this.x = x;
         this.y = y;
         this.text = text;
@@ -53,9 +53,9 @@ public class SimpleTextWidget extends ClickableWidget {
 
     @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (center) {
-            FontRenderers.normal.drawCenteredString(matrices, text, x, y, color);
+            FontRenderers.getNormal().drawCenteredString(matrices, text, x, y, color);
         } else {
-            FontRenderers.normal.drawString(matrices, text, x, y, color);
+            FontRenderers.getNormal().drawString(matrices, text, x, y, color);
         }
     }
 }

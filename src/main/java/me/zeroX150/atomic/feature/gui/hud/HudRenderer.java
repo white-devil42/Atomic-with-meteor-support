@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.gui.hud.element.HudElement;
+import me.zeroX150.atomic.feature.gui.hud.element.Taco;
 import me.zeroX150.atomic.feature.gui.hud.element.TargetHUD;
 import me.zeroX150.atomic.helper.event.EventType;
 import me.zeroX150.atomic.helper.event.Events;
@@ -22,15 +23,15 @@ import java.util.List;
 
 public class HudRenderer {
 
-    static         File        CONFIG = new File(Atomic.client.runDirectory, "hud.atomic");
-    private static HudRenderer INSTANCE;
-    boolean          isEditing     = false;
-    boolean          mouseHeldDown = false;
-    List<HudElement> elements      = register();
-    double           prevX         = Utils.Mouse.getMouseX();
-    double           prevY         = Utils.Mouse.getMouseY();
-    double           prevWX        = Atomic.client.getWindow().getScaledWidth();
-    double           prevWY        = Atomic.client.getWindow().getScaledHeight();
+    static final   File             CONFIG   = new File(Atomic.client.runDirectory, "hud.atomic");
+    private static HudRenderer      INSTANCE;
+    final          List<HudElement> elements = register();
+    boolean isEditing     = false;
+    boolean mouseHeldDown = false;
+    double  prevX         = Utils.Mouse.getMouseX();
+    double  prevY         = Utils.Mouse.getMouseY();
+    double  prevWX        = Atomic.client.getWindow().getScaledWidth();
+    double  prevWY        = Atomic.client.getWindow().getScaledHeight();
 
     private HudRenderer() {
         Events.registerEventHandler(EventType.MOUSE_EVENT, event -> {
@@ -68,6 +69,7 @@ public class HudRenderer {
     static List<HudElement> register() {
         List<HudElement> he = new ArrayList<>();
         he.add(new TargetHUD());
+        he.add(new Taco());
         return he;
     }
 
@@ -99,7 +101,7 @@ public class HudRenderer {
         }
         try {
             String contents = FileUtils.readFileToString(CONFIG, StandardCharsets.UTF_8);
-            JsonArray ja = new JsonParser().parse(contents).getAsJsonArray();
+            JsonArray ja = JsonParser.parseString(contents).getAsJsonArray();
             for (JsonElement jsonElement : ja) {
                 JsonObject jo = jsonElement.getAsJsonObject();
                 String id = jo.get("id").getAsString();

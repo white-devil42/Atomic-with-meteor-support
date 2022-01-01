@@ -7,8 +7,10 @@ package me.zeroX150.atomic.feature.command.impl;
 
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.command.Command;
-import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.world.GameMode;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Gamemode extends Command {
 
@@ -16,12 +18,19 @@ public class Gamemode extends Command {
         super("Gamemode", "Switch gamemodes client side", "gamemode", "gm", "gmode", "gamemodespoof", "gmspoof");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return Arrays.stream(GameMode.values()).map(GameMode::getName).collect(Collectors.toList()).toArray(String[]::new);
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (Atomic.client.interactionManager == null) {
             return;
         }
         if (args.length == 0) {
-            Utils.Client.sendMessage("gamemode pls");
+            message("gamemode pls");
         } else {
             GameMode gm = GameMode.byName(args[0]);
             Atomic.client.interactionManager.setGameMode(gm);

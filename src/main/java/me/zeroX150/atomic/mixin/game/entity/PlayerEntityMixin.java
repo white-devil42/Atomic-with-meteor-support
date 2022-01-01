@@ -89,7 +89,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
         }
     }
 
-    @Inject(method = "jump", at = @At("RETURN")) void r(CallbackInfo ci) {
+    @Inject(method = "jump", at = @At("RETURN")) void atomic_applyLongJump(CallbackInfo ci) {
         if (!this.equals(Atomic.client.player)) {
             return;
         }

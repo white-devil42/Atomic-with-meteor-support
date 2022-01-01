@@ -7,7 +7,6 @@ package me.zeroX150.atomic.feature.command.impl;
 
 import me.zeroX150.atomic.Atomic;
 import me.zeroX150.atomic.feature.command.Command;
-import me.zeroX150.atomic.helper.util.Utils;
 
 import java.util.Objects;
 
@@ -17,9 +16,16 @@ public class Say extends Command {
         super("Say", "Says something", "say", "tell");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"(message)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
-            Utils.Client.sendMessage("not sure if i can say nothing");
+            error("not sure if i can say nothing");
             return;
         }
         Objects.requireNonNull(Atomic.client.player).sendChatMessage(String.join(" ", args));

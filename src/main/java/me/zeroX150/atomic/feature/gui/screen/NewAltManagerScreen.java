@@ -50,19 +50,18 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class NewAltManagerScreen extends Screen implements FastTickable {
-
-    public static ExecutorService     backburner   = Executors.newFixedThreadPool(2);
-    static        File                ALTS_FILE    = new File(Atomic.client.runDirectory, "alts.atomic");
-    static        String              TOP_NOTE     = """
+    public static final ExecutorService     backburner   = Executors.newFixedThreadPool(2);
+    static final        File                ALTS_FILE    = new File(Atomic.client.runDirectory, "alts.atomic");
+    static final        String              TOP_NOTE     = """
             // DO NOT SHARE THIS FILE
             // This file contains sensitive information about your accounts
             // Unless you REALLY KNOW WHAT YOU ARE DOING, DO NOT SEND THIS TO ANYONE
             """;
-    static        NewAltManagerScreen INSTANCE;
-    final         int                 WIDGET_WIDTH = 180;
+    static              NewAltManagerScreen INSTANCE;
+    final               int                 WIDGET_WIDTH = 180;
+    final               List<AltRenderer>   alts         = new ArrayList<>();
     AltContainer              selectedAlt  = null;
     Mode                      selectedMode = Mode.MOJANG;
-    List<AltRenderer>         alts         = new ArrayList<>();
     ButtonWidget              delete;
     double                    renderScroll = 0;
     CyclingButtonWidget<Mode> mode;
@@ -74,7 +73,7 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
         Events.registerEventHandler(EventType.CONFIG_SAVE, event -> saveAlts());
     }
 
-    public static NewAltManagerScreen getInstance() {
+    public static NewAltManagerScreen instance() {
         if (INSTANCE == null) {
             INSTANCE = new NewAltManagerScreen();
         }
@@ -124,8 +123,6 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
         for (AltRenderer alt : alts) {
             alt.onFastTick();
         }
-        //            logIn.active = false;
-        //             logIn.active = true;
         delete.active = selectedAlt != null;
         renderScroll = Transitions.transition(renderScroll, scroll, 7, 0);
     }
@@ -142,7 +139,7 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
         }
         try {
             String contents = FileUtils.readFileToString(ALTS_FILE, StandardCharsets.UTF_8);
-            JsonArray ja = new JsonParser().parse(contents).getAsJsonArray();
+            JsonArray ja = JsonParser.parseString(contents).getAsJsonArray();
             for (JsonElement jsonElement : ja) {
                 JsonObject jo = jsonElement.getAsJsonObject();
                 AltContainer container = new AltContainer(jo.get("email").getAsString(), jo.get("password").getAsString(), Mode.valueOf(Mode.class, jo.get("type").getAsString()));
@@ -204,9 +201,6 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
     }
 
     @Override protected void init() {
-        /*logIn = new ButtonWidget(10, 10, WIDGET_WIDTH, 20, Text.of("Login"), button -> {
-            doLogin();
-        });*/
         delete = new ButtonWidget(width - WIDGET_WIDTH - 5, height - 25, WIDGET_WIDTH, 20, Text.of("Delete"), button -> {
             alts.removeIf(alt -> alt.container == selectedAlt);
             selectedAlt = null;
@@ -252,7 +246,7 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
         int yOffset = 10;
         int widthLeft = Atomic.client.getWindow().getScaledWidth() - 5 - WIDGET_WIDTH - 10;
         widthLeft = Math.max(widthLeft, 200);
-        Renderer.R2D.scissor(5, 5, widthLeft, height - 5 - FontRenderers.normal.getFontHeight() - 2);
+        Renderer.R2D.scissor(5, 5, widthLeft, height - 5 - FontRenderers.getNormal().getFontHeight() - 2);
         matrices.push();
         matrices.translate(0, -renderScroll, 0);
         for (AltRenderer alt : alts) {
@@ -277,13 +271,14 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
             RenderSystem.setShaderTexture(0, selectedAlt.skinTexture);
             Screen.drawTexture(matrices, x - 55, y - 5, 50, 50, 8.0F, 8, 8, 8, 64, 64);
 
-            FontRenderers.normal.drawString(matrices, ObjectUtils.firstNonNull(selectedAlt.username, selectedAlt.email), x, y, 0xFFFFFF);
-            FontRenderers.normal.drawString(matrices, "Pass: " + "*".repeat(selectedAlt.password.length()), x, y + FontRenderers.normal.getFontHeight(), 0xFFFFFF);
-            //FontRenderers.mono.drawString(matrices, ObjectUtils.firstNonNull(selectedAlt.uuid, UUID.fromString("0-0-0-0-0")).toString(), x, y + FontRenderers.normal.getFontHeight(), 0xAAAAAA);
-            FontRenderers.normal.drawString(matrices, "Used " + selectedAlt.usedCount + " time" + (selectedAlt.usedCount != 1 ? "s" : ""), x, y + FontRenderers.normal.getFontHeight() * 2 + 3, 0xFFFFFF);
-            FontRenderers.normal.drawString(matrices, "Is valid? " + (selectedAlt.valid ? "§aYes" : "§cNo"), x, y + FontRenderers.normal.getFontHeight() * 3 + 3, 0xFFFFFF);
+            FontRenderers.getNormal().drawString(matrices, ObjectUtils.firstNonNull(selectedAlt.username, selectedAlt.email), x, y, 0xFFFFFF);
+            FontRenderers.getNormal().drawString(matrices, "Pass: " + "*".repeat(selectedAlt.password.length()), x, y + FontRenderers.getNormal().getFontHeight(), 0xFFFFFF);
+            //FontRenderers.getMono().drawString(matrices, ObjectUtils.firstNonNull(selectedAlt.uuid, UUID.fromString("0-0-0-0-0")).toString(), x, y + FontRenderers.getNormal().getFontHeight(), 0xAAAAAA);
+            FontRenderers.getNormal()
+                    .drawString(matrices, "Used " + selectedAlt.usedCount + " time" + (selectedAlt.usedCount != 1 ? "s" : ""), x, y + FontRenderers.getNormal().getFontHeight() * 2 + 3, 0xFFFFFF);
+            FontRenderers.getNormal().drawString(matrices, "Is valid? " + (selectedAlt.valid ? "§aYes" : "§cNo"), x, y + FontRenderers.getNormal().getFontHeight() * 3 + 3, 0xFFFFFF);
         }
-        FontRenderers.normal.drawString(matrices, "Drag and drop a .txt with alts to import", 1, height - FontRenderers.normal.getFontHeight(), 0xFFFFFF);
+        FontRenderers.getNormal().drawString(matrices, "Drag and drop a .txt with alts to import", 1, height - FontRenderers.getNormal().getFontHeight(), 0xFFFFFF);
         super.render(matrices, mouseX, mouseY, delta);
     }
 
@@ -312,7 +307,7 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
 
     enum Mode {
         MICROSOFT("Microsoft"), MOJANG("Mojang"), CRACKED("Cracked");
-        String t;
+        final String t;
 
         Mode(String t) {
             this.t = t;
@@ -326,8 +321,8 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
     private static class AltRenderer extends ClickableWidget implements FastTickable {
 
 
-        AltContainer container;
-        double       renderX, renderY;
+        final AltContainer container;
+        double renderX, renderY;
 
         public AltRenderer(int x, int y, int width, int height, AltContainer container) {
             super(x, y, width, height, Text.of(""));
@@ -345,20 +340,20 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
 
         @Override public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (mouseX >= renderX && mouseX <= renderX + width && mouseY >= renderY && mouseY <= renderY + height) {
-                if (getInstance().selectedAlt == this.container) {
+                if (instance().selectedAlt == this.container) {
                     backburner.execute(() -> {
                         this.container.login();
-                        Atomic.client.execute(() -> getInstance().doLogin());
+                        Atomic.client.execute(() -> instance().doLogin());
                     });
                 }
-                getInstance().selectedAlt = this.container;
+                instance().selectedAlt = this.container;
             }
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             Color bg = new Color(20, 20, 20, 100);
-            if (getInstance().selectedAlt == container) {
+            if (instance().selectedAlt == container) {
                 bg = new Color(70, 70, 70, 120);
             }
             Renderer.R2D.fill(matrices, bg, renderX, renderY, renderX + width, renderY + height);
@@ -377,10 +372,14 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
             RenderSystem.setShaderTexture(0, container.skinTexture);
             Screen.drawTexture(matrices, (int) (renderX + 2), (int) (renderY + 2), tDimensions, tDimensions, 8.0F, 8, 8, 8, 64, 64);
 
-            FontRenderers.normal.drawString(matrices, username, renderX + 2 + tDimensions + 2, renderY + 1, rc.getRGB());
-            FontRenderers.mono.drawString(matrices, uuid, renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.normal.getFontHeight(), 0xAAAAAA);
-            FontRenderers.normal.drawString(matrices, "Used " + container.usedCount + " time" + (container.usedCount != 1 ? "s" : ""), renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.normal.getFontHeight() + FontRenderers.mono.getFontHeight(), rc.getRGB());
-            FontRenderers.normal.drawString(matrices, "Type: " + container.type.t, renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.normal.getFontHeight() * 2 + FontRenderers.mono.getFontHeight(), rc.getRGB());
+            FontRenderers.getNormal().drawString(matrices, username, renderX + 2 + tDimensions + 2, renderY + 1, rc.getRGB());
+            FontRenderers.getMono().drawString(matrices, uuid, renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.getNormal().getFontHeight(), 0xAAAAAA);
+            FontRenderers.getNormal()
+                    .drawString(matrices, "Used " + container.usedCount + " time" + (container.usedCount != 1 ? "s" : ""), renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.getNormal()
+                            .getFontHeight() + FontRenderers.getMono().getFontHeight(), rc.getRGB());
+            FontRenderers.getNormal()
+                    .drawString(matrices, "Type: " + container.type.t, renderX + 2 + tDimensions + 2, renderY + 1 + FontRenderers.getNormal().getFontHeight() * 2 + FontRenderers.getMono()
+                            .getFontHeight(), rc.getRGB());
             String t = "";
             if (container.didLogin && !container.loginDone) {
                 t = "Logging in...";
@@ -388,8 +387,8 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
             if (Atomic.client.getSession().getProfile().getId().equals(container.uuid)) {
                 t = "§aCurrently using";
             }
-            float w = FontRenderers.normal.getStringWidth(t) + 2;
-            FontRenderers.normal.drawString(matrices, t, renderX + width - w, renderY + height - FontRenderers.normal.getFontHeight() - 2, 0xFFFFFF);
+            float w = FontRenderers.getNormal().getStringWidth(t) + 2;
+            FontRenderers.getNormal().drawString(matrices, t, renderX + width - w, renderY + height - FontRenderers.getNormal().getFontHeight() - 2, 0xFFFFFF);
         }
 
 
@@ -400,14 +399,15 @@ public class NewAltManagerScreen extends Screen implements FastTickable {
 
     static class AltContainer {
 
-        static Map<UUID, Identifier> skins = new HashMap<>();
-        boolean didLogin  = false;
-        boolean loginDone = false;
-        String  email, password;
+        static final Map<UUID, Identifier> skins = new HashMap<>();
+        final        String                email;
+        final        String                password;
+        final        Mode                  type;
+        boolean              didLogin    = false;
+        boolean              loginDone   = false;
         String               username;
         UUID                 uuid;
         boolean              valid       = true;
-        Mode                 type;
         int                  usedCount   = 0;
         MinecraftProfileSkin latestSkin;
         Identifier           skinTexture = DefaultSkinHelper.getTexture();

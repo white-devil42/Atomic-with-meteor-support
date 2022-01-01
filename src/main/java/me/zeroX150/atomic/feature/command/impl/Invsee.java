@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Invsee extends Command {
 
@@ -20,9 +21,17 @@ public class Invsee extends Command {
         super("Invsee", "Shows you the inv of another player", "invsee", "isee");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return Atomic.client.world.getPlayers().stream().map(abstractClientPlayerEntity -> abstractClientPlayerEntity.getGameProfile().getName()).collect(Collectors.toList())
+                    .toArray(String[]::new);
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length == 0) {
-            Utils.Client.sendMessage("i need username");
+            message("i need username");
             return;
         }
         PlayerEntity t = null;
@@ -35,7 +44,7 @@ public class Invsee extends Command {
             }
         }
         if (t == null) {
-            Utils.Client.sendMessage("No player found");
+            error("No player found");
             return;
         }
         PlayerEntity finalT = t;

@@ -28,7 +28,7 @@ import java.util.Objects;
 
 public class NbtEditScreen extends Screen implements FastTickable {
 
-    static final double LINE_HEIGHT = FontRenderers.mono.getFontHeight();
+    static final double LINE_HEIGHT = FontRenderers.getMono().getMarginHeight();
     List<String> lines            = new ArrayList<>();
     NbtCompound  source;
     int          cursorX          = 0;
@@ -71,7 +71,7 @@ public class NbtEditScreen extends Screen implements FastTickable {
                 List<String> splitContent = new ArrayList<>();
                 StringBuilder line = new StringBuilder();
                 for (char c : s.toCharArray()) {
-                    if (FontRenderers.mono.getStringWidth(line + " " + c) >= maxWidth) {
+                    if (FontRenderers.getMono().getStringWidth(line + " " + c) >= maxWidth) {
                         splitContent.add(line.toString());
                         line = new StringBuilder();
                     }
@@ -100,7 +100,7 @@ public class NbtEditScreen extends Screen implements FastTickable {
                     List<String> splitContent = new ArrayList<>();
                     StringBuilder line = new StringBuilder();
                     for (char c : s.toCharArray()) {
-                        if (FontRenderers.mono.getStringWidth(line + " " + c) >= maxWidth) {
+                        if (FontRenderers.getMono().getStringWidth(line + " " + c) >= maxWidth) {
                             splitContent.add(line.toString());
                             line = new StringBuilder();
                         }
@@ -126,7 +126,7 @@ public class NbtEditScreen extends Screen implements FastTickable {
                         List<String> splitContent = new ArrayList<>();
                         StringBuilder line = new StringBuilder();
                         for (char c : s.toCharArray()) {
-                            if (FontRenderers.mono.getStringWidth(line + " " + c) >= maxWidth) {
+                            if (FontRenderers.getMono().getStringWidth(line + " " + c) >= maxWidth) {
                                 splitContent.add(line.toString());
                                 line = new StringBuilder();
                             }
@@ -158,7 +158,7 @@ public class NbtEditScreen extends Screen implements FastTickable {
                     List<String> splitContent = new ArrayList<>();
                     StringBuilder line = new StringBuilder();
                     for (char c : s.toCharArray()) {
-                        if (FontRenderers.mono.getStringWidth(line + " " + c) >= maxWidth) {
+                        if (FontRenderers.getMono().getStringWidth(line + " " + c) >= maxWidth) {
                             splitContent.add(line.toString());
                             line = new StringBuilder();
                         }
@@ -199,7 +199,7 @@ public class NbtEditScreen extends Screen implements FastTickable {
         if (System.currentTimeMillis() - lastMsgDisplay > 6000) {
             errorMessage = "";
         }
-        FontRenderers.normal.drawString(matrices, errorMessage, 5, 1, 0xFFFFFF);
+        FontRenderers.getNormal().drawString(matrices, errorMessage, 5, 1, 0xFFFFFF);
         List<String> lines = new ArrayList<>(this.lines); // to make a backup for rendering
         if (lines.size() == 0) {
             lines.add("{");
@@ -214,15 +214,15 @@ public class NbtEditScreen extends Screen implements FastTickable {
         Renderer.R2D.fill(matrices, new Color(0, 0, 0, 100), 5, 11, width - 110, 11 + height);
         int yOffset = 12;
         for (String line : lines) {
-            FontRenderers.mono.drawString(matrices, line, 6, yOffset, 0xFFFFFF);
-            yOffset += FontRenderers.mono.getFontHeight();
+            FontRenderers.getMono().drawString(matrices, line, 6, yOffset, 0xFFFFFF);
+            yOffset += FontRenderers.getMono().getFontHeight();
         }
         double rCX;
         double rCY;
         if (lines.size() != 0) {
             cursorY = MathHelper.clamp(cursorY, 0, lines.size() - 1); // start from 0 here, gotta shift everything down
             cursorX = MathHelper.clamp(cursorX, 0, lines.get(cursorY).length()); // start from 1 here because fucking substring
-            rCX = FontRenderers.mono.getStringWidth(lines.get(cursorY).substring(0, cursorX));
+            rCX = FontRenderers.getMono().getStringWidth(lines.get(cursorY).substring(0, cursorX));
             rCY = cursorY * LINE_HEIGHT;
         } else {
             cursorY = cursorX = 0;

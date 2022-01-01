@@ -34,14 +34,14 @@ import java.util.stream.StreamSupport;
 
 public class TargetHud extends Module {
 
-    public static int          modalWidth     = 160;
-    public static int          modalHeight    = 70;
-    final         BooleanValue renderPing     = (BooleanValue) this.config.create("Render ping", true).description("Shows the ping of the enemy");
-    final         BooleanValue renderHP       = (BooleanValue) this.config.create("Render health", true).description("Shows the current HP");
-    final         BooleanValue renderMaxHP    = (BooleanValue) this.config.create("Render max health", true).description("Shows the max HP");
-    final         BooleanValue renderDistance = (BooleanValue) this.config.create("Render distance", true).description("Shows the distance to the player");
-    final         BooleanValue renderLook     = (BooleanValue) this.config.create("Render look", false).description("Shows if the player is looking at you");
-    final         BooleanValue renderLoseWin  = (BooleanValue) this.config.create("Render lose / win", true).description("Shows if you're losing or winning, if in battle");
+    public static final int          modalWidth     = 160;
+    public static final int          modalHeight    = 70;
+    final               BooleanValue renderPing     = (BooleanValue) this.config.create("Render ping", true).description("Shows the ping of the enemy");
+    final               BooleanValue renderHP       = (BooleanValue) this.config.create("Render health", true).description("Shows the current HP");
+    final               BooleanValue renderMaxHP    = (BooleanValue) this.config.create("Render max health", true).description("Shows the max HP");
+    final               BooleanValue renderDistance = (BooleanValue) this.config.create("Render distance", true).description("Shows the distance to the player");
+    final               BooleanValue renderLook     = (BooleanValue) this.config.create("Render look", false).description("Shows if the player is looking at you");
+    final               BooleanValue renderLoseWin  = (BooleanValue) this.config.create("Render lose / win", true).description("Shows if you're losing or winning, if in battle");
     double wX           = 0;
     double renderWX1    = 0;
     Entity e            = null;
@@ -144,14 +144,14 @@ public class TargetHud extends Module {
             stack.translate(x, y, 0);
             stack.scale((float) renderWX, (float) renderWX, 1);
             Renderer.R2D.fill(stack, Renderer.Util.modify(Themes.Theme.ATOMIC.getPalette().left(), -1, -1, -1, 200), 0, 0, modalWidth, modalHeight);
-            FontRenderers.normal.drawString(stack, entity.getEntityName(), 40, yOffset, 0xFFFFFF);
-            yOffset += FontRenderers.normal.getFontHeight();
+            FontRenderers.getNormal().drawString(stack, entity.getEntityName(), 40, yOffset, 0xFFFFFF);
+            yOffset += FontRenderers.getNormal().getFontHeight();
             PlayerListEntry ple = Objects.requireNonNull(Atomic.client.getNetworkHandler()).getPlayerListEntry(entity.getUuid());
             if (ple != null && renderPing.getValue()) {
                 int ping = ple.getLatency();
                 String v = ping + " ms";
-                float ww = FontRenderers.normal.getStringWidth(v);
-                FontRenderers.normal.drawString(stack, v, modalWidth - ww - 5, 5, 0xFFFFFF);
+                float ww = FontRenderers.getNormal().getStringWidth(v);
+                FontRenderers.getNormal().drawString(stack, v, modalWidth - ww - 5, 5, 0xFFFFFF);
             }
             float mhealth = (float) trackedMaxHp;
             float health = (float) trackedHp;
@@ -168,31 +168,32 @@ public class TargetHud extends Module {
             Color MID_END = Renderer.Util.lerp(GREEN, RED, hPer);
             Renderer.R2D.fillGradientH(stack, RED, MID_END, 0, modalHeight - 2, renderToX, modalHeight);
             if (renderHP.getValue()) {
-                FontRenderers.normal.drawString(stack, Utils.Math.roundToDecimal(trackedHp, 2) + " HP", 40, yOffset, MID_END.getRGB());
-                yOffset += FontRenderers.normal.getFontHeight();
+                FontRenderers.getNormal().drawString(stack, Utils.Math.roundToDecimal(trackedHp, 2) + " HP", 40, yOffset, MID_END.getRGB());
+                yOffset += FontRenderers.getNormal().getFontHeight();
             }
             if (renderDistance.getValue()) {
-                FontRenderers.normal.drawString(stack, Utils.Math.roundToDecimal(entity.getPos().distanceTo(Objects.requireNonNull(Atomic.client.player).getPos()), 1) + " D", 40, yOffset, 0xFFFFFF);
-                yOffset += FontRenderers.normal.getFontHeight();
+                FontRenderers.getNormal()
+                        .drawString(stack, Utils.Math.roundToDecimal(entity.getPos().distanceTo(Objects.requireNonNull(Atomic.client.player).getPos()), 1) + " D", 40, yOffset, 0xFFFFFF);
+                yOffset += FontRenderers.getNormal().getFontHeight();
             }
             if (renderMaxHP.getValue()) {
                 String t = Utils.Math.roundToDecimal(mhealth, 2) + "";
                 if (remainder > 0) {
                     t += "§6 + " + Utils.Math.roundToDecimal(remainder, 1);
                 }
-                float mhP = FontRenderers.normal.getStringWidth(t);
-                FontRenderers.normal.drawString(stack, t, (modalWidth - mhP - 3), (modalHeight - 3 - FontRenderers.normal.getFontHeight()), 0xFFFFFF);
+                float mhP = FontRenderers.getNormal().getStringWidth(t);
+                FontRenderers.getNormal().drawString(stack, t, (modalWidth - mhP - 3), (modalHeight - 3 - FontRenderers.getNormal().getFontHeight()), 0xFFFFFF);
             }
 
             HitResult bhr = entity.raycast(entity.getPos().distanceTo(Objects.requireNonNull(Atomic.client.player).getPos()), 0f, false);
             if (bhr.getPos().distanceTo(Atomic.client.player.getPos().add(0, 1, 0)) < 1.5 && renderLook.getValue()) {
-                FontRenderers.normal.drawString(stack, "Looks at you", 40, yOffset, 0xFFFFFF);
-                yOffset += FontRenderers.normal.getFontHeight();
+                FontRenderers.getNormal().drawString(stack, "Looks at you", 40, yOffset, 0xFFFFFF);
+                yOffset += FontRenderers.getNormal().getFontHeight();
             }
 
             if (AttackManager.getLastAttackInTimeRange() != null && renderLoseWin.getValue()) {
                 String st = entity.getHealth() > Atomic.client.player.getHealth() ? "Losing" : entity.getHealth() == Atomic.client.player.getHealth() ? "Stalemate" : "Winning";
-                FontRenderers.normal.drawString(stack, st, 40, yOffset, 0xFFFFFF);
+                FontRenderers.getNormal().drawString(stack, st, 40, yOffset, 0xFFFFFF);
             }
 
             Text cname = re.getCustomName();

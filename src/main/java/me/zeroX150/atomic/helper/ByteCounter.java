@@ -3,7 +3,6 @@ package me.zeroX150.atomic.helper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataOutput;
-import java.io.IOException;
 
 public class ByteCounter implements DataOutput {
     private static final ByteCounter instance = new ByteCounter();
@@ -21,15 +20,15 @@ public class ByteCounter implements DataOutput {
         c = 0;
     }
 
-    @Override public void write(int b) throws IOException {
+    @Override public void write(int b) {
         c++;
     }
 
-    @Override public void write(byte[] b) throws IOException {
+    @Override public void write(byte[] b) {
         c += b.length;
     }
 
-    @Override public void write(byte @NotNull [] b, int off, int len) throws IOException {
+    @Override public void write(byte @NotNull [] b, int off, int len) {
         c += len;
     }
 

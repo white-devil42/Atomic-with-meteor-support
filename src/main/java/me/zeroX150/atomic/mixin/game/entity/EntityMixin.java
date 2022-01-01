@@ -41,13 +41,6 @@ import java.util.Objects;
     private static boolean real(WorldBorder instance, Entity entity, Box box) {
         return !ModuleRegistry.getByClass(IgnoreWorldBorder.class).isEnabled() && instance.canCollide(entity, box);
     }
-    //    @Redirect(method = "adjustMovementForCollisions(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;",
-    //            at = @At(value = "NEW", target = "Lnet/minecraft/util/collection/ReusableStream;<init>")) private ReusableStream<VoxelShape> atomic_overwriteWBCollision(Stream<VoxelShape> stream) {
-    //        if (Objects.requireNonNull(ModuleRegistry.getByClass(IgnoreWorldBorder.class)).isEnabled()) {
-    //            return new ReusableStream<>(Stream.empty());
-    //        }
-    //        return new ReusableStream<>(stream);
-    //    }
 
     @Inject(method = "isGlowing", at = @At("HEAD"), cancellable = true) void atomic_overwriteEspStats(CallbackInfoReturnable<Boolean> cir) {
         // this is a whole different layer of cursed
@@ -67,4 +60,6 @@ import java.util.Objects;
             info.cancel();
         }
     }
+
+
 }

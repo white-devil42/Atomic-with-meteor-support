@@ -55,7 +55,7 @@ public class AutoLogin extends Module {
     }
 
     @Override public void enable() {
-        Utils.Client.sendMessage("Send the sentence you configured in chat to /register and /login");
+        Utils.Logging.messageChat("Send the sentence you configured in chat to /register and /login");
     }
 
     @Override public void disable() {

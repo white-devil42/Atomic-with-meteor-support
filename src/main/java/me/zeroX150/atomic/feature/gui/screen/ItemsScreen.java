@@ -9,8 +9,12 @@ import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class ItemsScreen extends ImGuiProxyScreen {
     private static ItemsScreen INSTANCE;
+    final          DateFormat  df = new SimpleDateFormat("H:m:s, d/M/y");
     NodeNbtFormatter.ObjectNode root = null;
 
     private ItemsScreen() {
@@ -42,7 +46,7 @@ public class ItemsScreen extends ImGuiProxyScreen {
                 ImGui.button("Generate");
                 if (ImGui.isItemClicked()) {
                     if (!Atomic.client.interactionManager.hasCreativeInventory()) {
-                        Utils.Client.sendMessage("Need creative mode");
+                        Utils.Logging.messageChat("Need creative mode");
                         return;
                     }
                     ItemStack r = value.getGenerator().exploit();
@@ -58,7 +62,6 @@ public class ItemsScreen extends ImGuiProxyScreen {
     void showNbt(NbtCompound c) {
         NodeNbtFormatter f = new NodeNbtFormatter();
         root = (NodeNbtFormatter.ObjectNode) f.format(c);
-        root.children.forEach((s, node) -> System.out.println(s + ": " + node.toString()));
     }
 
     void renderItemNbtTree(int indent, String name, NodeNbtFormatter.Node r) {

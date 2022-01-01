@@ -43,7 +43,7 @@ public class NodeNbtFormatter {
     }
 
     public static class ObjectNode extends Node {
-        public Map<String, Node> children = new ConcurrentHashMap<>();
+        public final Map<String, Node> children = new ConcurrentHashMap<>();
 
         public ObjectNode(NbtElement parent) {
             super(parent);
@@ -55,7 +55,7 @@ public class NodeNbtFormatter {
     }
 
     public static class ListNode extends Node {
-        public List<Node> children = new ArrayList<>();
+        public final List<Node> children = new ArrayList<>();
 
         public ListNode(NbtElement parent) {
             super(parent);
@@ -67,7 +67,7 @@ public class NodeNbtFormatter {
     }
 
     public static class Node {
-        public NbtElement parent;
+        public final NbtElement parent;
 
         public Node(NbtElement parent) {
             this.parent = parent;

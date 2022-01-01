@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
     }
 
     @Inject(method = "init", at = @At("TAIL")) public void atomic_postInit(CallbackInfo ci) {
-        ButtonWidget alts = new ButtonWidget(1, 22, 130, 20, Text.of("Alt manager"), button -> Atomic.client.setScreen(NewAltManagerScreen.getInstance()));
+        ButtonWidget alts = new ButtonWidget(1, 22, 130, 20, Text.of("Alt manager"), button -> Atomic.client.setScreen(NewAltManagerScreen.instance()));
         ButtonWidget customScreen = new ButtonWidget(1, 1, 130, 20, Text.of("Custom home screen"), button -> {
             ClientConfig.customMainMenu.setValue(true);
             Atomic.client.setScreen(null);

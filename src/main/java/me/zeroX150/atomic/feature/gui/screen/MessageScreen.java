@@ -37,7 +37,7 @@ public class MessageScreen extends Screen implements FastTickable {
             this.parent = Atomic.client.currentScreen;
         }
         this.title = title;
-        description = String.join("\n", Utils.splitLinesToWidth(description, width - 10, FontRenderers.mono));
+        description = String.join("\n", Utils.splitLinesToWidth(description, width - 10, FontRenderers.getMono()));
         this.description = description;
         this.callback = callback;
         this.type = type;
@@ -110,13 +110,13 @@ public class MessageScreen extends Screen implements FastTickable {
         Renderer.R2D.fill(matrices, Utils.getCurrentRGB(), centerX - width / 2d - 2, centerY - height / 2d, centerX - width / 2d, centerY + height / 2d);
         Renderer.R2D.fill(matrices, new CustomColor(0, 0, 0, 200), centerX - width / 2d, centerY - height / 2d, centerX + width / 2d, centerY + height / 2d);
         if (!title.isEmpty()) {
-            FontRenderers.normal.drawCenteredString(matrices, title, centerX, centerY - height / 2d + FontRenderers.normal.getFontHeight() / 2f, 0xFFFFFF);
+            FontRenderers.getNormal().drawCenteredString(matrices, title, centerX, centerY - height / 2d + FontRenderers.getNormal().getFontHeight() / 2f, 0xFFFFFF);
         }
         if (!description.isEmpty()) {
             int yoff = 0;
             for (String s : description.split("\n")) {
-                FontRenderers.mono.drawCenteredString(matrices, s, centerX, centerY - height / 2d + FontRenderers.normal.getFontHeight() / 2f + 10 + yoff, 0xCCCCCC);
-                yoff += FontRenderers.mono.getFontHeight();
+                FontRenderers.getMono().drawCenteredString(matrices, s, centerX, centerY - height / 2d + FontRenderers.getNormal().getFontHeight() / 2f + 10 + yoff, 0xCCCCCC);
+                yoff += FontRenderers.getMono().getFontHeight();
             }
         }
         super.render(matrices, mouseX, mouseY, delta);

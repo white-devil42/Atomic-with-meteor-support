@@ -18,6 +18,8 @@ import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 
 public class NoTitles extends Module {
+    long         blocked   = 0L;
+    Notification lastShown = null;
 
     public NoTitles() {
         super("NoTitles", "Completely removes any titles from rendering", ModuleType.MISC);
@@ -26,14 +28,18 @@ public class NoTitles extends Module {
                 return;
             }
             PacketEvent pe = (PacketEvent) event;
-            if (pe.getPacket() instanceof TitleS2CPacket packet) {
-                Notification.create(8000, "", true, "Blocked title \"" + packet.getTitle().getString() + "§r\"");
+            if (pe.getPacket() instanceof TitleS2CPacket) {
+                blocked++;
+                // create new notif if old one expired
+                if (lastShown.creationDate + lastShown.duration < System.currentTimeMillis()) {
+                    lastShown = Notification.create(8000, "", true, "Blocked " + blocked + " titles");
+                }
+                // else just set the current notif to our shit
+                else {
+                    lastShown.contents[0] = "Blocked " + blocked + " titles";
+                }
                 event.setCancelled(true);
-            } else if (pe.getPacket() instanceof SubtitleS2CPacket packet) {
-                Notification.create(10000, "", true, "Blocked subtitle \"" + packet.getSubtitle().getString() + "§r\"");
-                event.setCancelled(true);
-            } else if (pe.getPacket() instanceof TitleFadeS2CPacket packet) {
-                Notification.create(8000, "", true, "Blocked duration packet: FI:" + packet.getFadeInTicks() + " S:" + packet.getRemainTicks() + " FO:" + packet.getFadeOutTicks());
+            } else if (pe.getPacket() instanceof SubtitleS2CPacket || pe.getPacket() instanceof TitleFadeS2CPacket) {
                 event.setCancelled(true);
                 Atomic.client.inGameHud.setDefaultTitleFade();
             }

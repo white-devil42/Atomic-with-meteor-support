@@ -63,20 +63,20 @@ import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.MODULE_HEIG
 import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.MODULE_WIDTH;
 import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.SOURCE_X;
 import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.SOURCE_Y;
-import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.getInstance;
+import static me.zeroX150.atomic.feature.gui.clickgui.ClickGUIScreen.instance;
 
 public class ClickGUIScreen extends Screen implements FastTickable, NonClearingInit {
 
     public static final  Identifier     LOGO            = new Identifier("atomic", "logo.png");
+    static final         double         CATEGORY_WIDTH  = 100;
+    static final         double         CATEGORY_HEIGHT = 30;
+    static final         double         MODULE_WIDTH    = 100;
+    static final         double         MODULE_HEIGHT   = 20;
+    static final         double         MAX_HEIGHT      = (int) (Arrays.stream(ModuleType.values()).filter(moduleType -> moduleType != ModuleType.HIDDEN).count() * CATEGORY_HEIGHT);
+    static final         double         CONFIG_HEIGHT   = MAX_HEIGHT;
+    static final         double         CONFIG_WIDTH    = 300;
+    static final         double         MAX_WIDTH       = CATEGORY_WIDTH + MODULE_WIDTH + CONFIG_WIDTH;
     private static final ClickGUIScreen INSTANCE        = new ClickGUIScreen();
-    static               double         CATEGORY_WIDTH  = 100;
-    static               double         CATEGORY_HEIGHT = 30;
-    static               double         MODULE_WIDTH    = 100;
-    static               double         MODULE_HEIGHT   = 20;
-    static               double         MAX_HEIGHT      = (int) (Arrays.stream(ModuleType.values()).filter(moduleType -> moduleType != ModuleType.HIDDEN).count() * CATEGORY_HEIGHT);
-    static               double         CONFIG_HEIGHT   = MAX_HEIGHT;
-    static               double         CONFIG_WIDTH    = 300;
-    static               double         MAX_WIDTH       = CATEGORY_WIDTH + MODULE_WIDTH + CONFIG_WIDTH;
     static               int            SOURCE_X        = 10;
     static               int            SOURCE_Y        = 10;
     CategoryDisplay selected;
@@ -89,7 +89,7 @@ public class ClickGUIScreen extends Screen implements FastTickable, NonClearingI
         super(Text.of("Atomic client"));
     }
 
-    public static ClickGUIScreen getInstance() {
+    public static ClickGUIScreen instance() {
         return INSTANCE;
     }
 
@@ -207,13 +207,13 @@ public class ClickGUIScreen extends Screen implements FastTickable, NonClearingI
         double addX = (1 - animProgE) * (MAX_WIDTH / 2d);
         double addY = (1 - animProgE) * (MAX_HEIGHT / 2d);
         if (!searchTerm.isEmpty()) {
-            FontRenderers.mono.drawString(matrices, searchTerm + " (esc to clear)", (float) (SOURCE_X + addX), (float) (SOURCE_Y + addY - 10), new Color(255, 255, 255, 100).getRGB(), false);
+            FontRenderers.getMono().drawString(matrices, searchTerm + " (esc to clear)", (float) (SOURCE_X + addX), (float) (SOURCE_Y + addY - 10), new Color(255, 255, 255, 100).getRGB(), false);
         }
         Renderer.R2D.scissor(SOURCE_X + addX, SOURCE_Y + addY, animProgE * MAX_WIDTH, animProgE * MAX_HEIGHT);
         super.render(matrices, mouseX, mouseY, delta);
         Renderer.R2D.unscissor();
 
-        FontRenderers.normal.drawCenteredString(matrices, desc, width / 2f, height - 20, Themes.currentActiveTheme.fontColor().getRGB());
+        FontRenderers.getNormal().drawCenteredString(matrices, desc, width / 2f, height - 20, Themes.currentActiveTheme.fontColor().getRGB());
         desc = "";
     }
 
@@ -297,10 +297,10 @@ public class ClickGUIScreen extends Screen implements FastTickable, NonClearingI
 
 class ClearButton extends ClickableWidget {
 
-    String   text;
-    Runnable onClick;
-    Color    inactive = new Color(20, 20, 20, 230);
-    Color    active   = new Color(40, 40, 40, 230);
+    final String   text;
+    final Runnable onClick;
+    Color inactive = new Color(20, 20, 20, 230);
+    Color active   = new Color(40, 40, 40, 230);
 
     public ClearButton(int x, int y, int width, int height, String text, Runnable onClick) {
         super(x, y, width, height, Text.of(text));
@@ -317,7 +317,7 @@ class ClearButton extends ClickableWidget {
         Renderer.R2D.fill(matrices, toUse, this.x, this.y, this.x + width, this.y + height);
         double centerX = this.x + this.width / 2d;
         double centerY = this.y + this.height / 2d;
-        FontRenderers.normal.drawCenteredString(matrices, text, centerX, centerY - FontRenderers.normal.getFontHeight() / 2f, Themes.currentActiveTheme.fontColor().getRGB());
+        FontRenderers.getNormal().drawCenteredString(matrices, text, centerX, centerY - FontRenderers.getNormal().getFontHeight() / 2f, Themes.currentActiveTheme.fontColor().getRGB());
     }
 
     @Override public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -335,12 +335,12 @@ class ClearButton extends ClickableWidget {
 
 class ConfigDisplay extends ClickableWidget implements FastTickable {
 
-    Map<PropGroup, List<Map.Entry<DynamicValue<?>, ClickableWidget>>> widgets = new LinkedHashMap<>();
-    ModuleConfig                                                      parent;
-    Module                                                            p;
-    int                                                               padding = 5;
-    double                                                            scroll  = 0, trackedScroll = 0;
-    int configEntryWidth = (int) ((CONFIG_WIDTH) / 2 - 5);
+    final Map<PropGroup, List<Map.Entry<DynamicValue<?>, ClickableWidget>>> widgets          = new LinkedHashMap<>();
+    final ModuleConfig                                                      parent;
+    final Module                                                            p;
+    final int                                                               padding          = 5;
+    final int                                                               configEntryWidth = (int) ((CONFIG_WIDTH) / 2 - 5);
+    double scroll = 0, trackedScroll = 0;
 
     public ConfigDisplay(int x, int y, Module parent) {
         super(x, y, (int) CONFIG_WIDTH, (int) CONFIG_HEIGHT, Text.of(""));
@@ -357,7 +357,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
             }
         }
         for (DynamicValue<?> dynamicValue : leftOver) {
-            orphans.withChild(dynamicValue);
+            orphans.addChild(dynamicValue);
         }
         groups.add(0, orphans);
         for (PropGroup group : groups) {
@@ -368,7 +368,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                     t = new KeyListenerButton(0, this.y + yOffset, configEntryWidth, parent) {
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(dynamicValue.getDescription());
+                                ClickGUIScreen.instance().renderDescription(dynamicValue.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -377,7 +377,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                     t = new Toggleable(0, this.y + yOffset, configEntryWidth, (BooleanValue) dynamicValue) {
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(dynamicValue.getDescription());
+                                ClickGUIScreen.instance().renderDescription(dynamicValue.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -386,7 +386,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                     t = new Slider(0, this.y + yOffset + 1, configEntryWidth - 1, (SliderValue) dynamicValue) {
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(dynamicValue.getDescription());
+                                ClickGUIScreen.instance().renderDescription(dynamicValue.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -395,7 +395,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                     t = new ButtonMultiSelectable(0, this.y + yOffset, configEntryWidth, mval) {
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(dynamicValue.getDescription());
+                                ClickGUIScreen.instance().renderDescription(dynamicValue.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -404,7 +404,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                     t = new ColorConfig(0, this.y + yOffset, configEntryWidth, orig) {
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(orig.getDescription());
+                                ClickGUIScreen.instance().renderDescription(orig.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -417,7 +417,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
 
                         @Override public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                             if (isHovered()) {
-                                ClickGUIScreen.getInstance().renderDescription(dynamicValue.getDescription());
+                                ClickGUIScreen.instance().renderDescription(dynamicValue.getDescription());
                             }
                             super.render(matrices, mouseX, mouseY, delta);
                         }
@@ -443,8 +443,8 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
         Renderer.R2D.fill(matrices, Themes.currentActiveTheme.right(), this.x, this.y, this.x + width, this.y + height);
         int yOffset = 14;
         matrices.translate(0, -trackedScroll, 0);
-        FontRenderers.normal.drawString(matrices, p.getName() + " config", this.x + 5, this.y + yOffset / 2f - FontRenderers.normal.getFontHeight() / 2f, Themes.currentActiveTheme.fontColor()
-                .getRGB());
+        FontRenderers.getNormal()
+                .drawString(matrices, p.getName() + " config", this.x + 5, this.y + yOffset / 2f - FontRenderers.getNormal().getFontHeight() / 2f, Themes.currentActiveTheme.fontColor().getRGB());
         for (PropGroup propGroup : widgets.keySet()) {
             boolean showsAnything = false;
             for (Map.Entry<DynamicValue<?>, ClickableWidget> dynamicValueClickableWidgetEntry : widgets.get(propGroup)) {
@@ -453,8 +453,8 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                 }
             }
             if (!propGroup.getName().isEmpty() && showsAnything) {
-                FontRenderers.normal.drawCenteredString(matrices, propGroup.getName(), this.x + this.width / 2f, this.y + yOffset, Themes.currentActiveTheme.fontColor().getRGB());
-                yOffset += FontRenderers.normal.getFontHeight() + 2;
+                FontRenderers.getNormal().drawCenteredString(matrices, propGroup.getName(), this.x + this.width / 2f, this.y + yOffset, Themes.currentActiveTheme.fontColor().getRGB());
+                yOffset += FontRenderers.getNormal().getFontHeight() + 2;
             }
             for (Map.Entry<DynamicValue<?>, ClickableWidget> dynamicValueClickableWidgetEntry : widgets.get(propGroup)) {
                 dynamicValueClickableWidgetEntry.getValue().y = this.y + yOffset;
@@ -462,7 +462,7 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
                 if (!dynamicValueClickableWidgetEntry.getKey().shouldShow()) {
                     continue;
                 }
-                FontRenderers.normal.drawString(matrices, dynamicValueClickableWidgetEntry.getKey().getKey(), this.x + padding, this.y + yOffset, Themes.currentActiveTheme.fontColor().getRGB());
+                FontRenderers.getNormal().drawString(matrices, dynamicValueClickableWidgetEntry.getKey().getKey(), this.x + padding, this.y + yOffset, Themes.currentActiveTheme.fontColor().getRGB());
                 dynamicValueClickableWidgetEntry.getValue().render(matrices, mouseX, mouseY, delta);
                 yOffset += dynamicValueClickableWidgetEntry.getValue().getHeight();
             }
@@ -584,10 +584,10 @@ class ConfigDisplay extends ClickableWidget implements FastTickable {
 
 class ModuleDisplay extends ClearButton implements FastTickable {
 
-    boolean       isSelected;
-    Module        module;
-    ConfigDisplay configDisplay;
-    double        animProg = 0;
+    final Module        module;
+    final ConfigDisplay configDisplay;
+    boolean isSelected;
+    double  animProg = 0;
 
     public ModuleDisplay(int x, int y, Module module) {
         super(x, y, (int) MODULE_WIDTH, (int) MODULE_HEIGHT, module.getName(), () -> {
@@ -628,14 +628,14 @@ class ModuleDisplay extends ClearButton implements FastTickable {
             onButton = false;
         }
         if (onButton) {
-            ClickGUIScreen.getInstance().renderDescription(module.getDescription());
+            ClickGUIScreen.instance().renderDescription(module.getDescription());
         }
         Color toUse = onButton ? active : inactive;
         Renderer.R2D.fill(matrices, toUse, this.x, this.y, this.x + width, this.y + height);
         Renderer.R2D.fill(matrices, Utils.getCurrentRGB(), this.x, this.y, this.x + 1, this.y + (animProg * height));
         double centerY = this.y + this.height / 2d;
-        int color = getInstance().searchTerm.isEmpty() || nameMatches(module.getName(), getInstance().searchTerm) ? Themes.currentActiveTheme.fontColor().getRGB() : 0x555555;
-        FontRenderers.normal.drawString(matrices, text, this.x + 5, centerY - FontRenderers.normal.getFontHeight() / 2f, color);
+        int color = instance().searchTerm.isEmpty() || nameMatches(module.getName(), instance().searchTerm) ? Themes.currentActiveTheme.fontColor().getRGB() : 0x555555;
+        FontRenderers.getNormal().drawString(matrices, text, this.x + 5, centerY - FontRenderers.getNormal().getFontHeight() / 2f, color);
         MatrixStack s = Renderer.R3D.getEmptyMatrixStack();
         if (isSelected) {
             configDisplay.render(s, (int) Utils.Mouse.getMouseX(), (int) Utils.Mouse.getMouseY(), delta);
@@ -712,17 +712,15 @@ class ModuleDisplay extends ClearButton implements FastTickable {
 
 class CategoryDisplay extends ClearButton implements FastTickable {
 
-    public double trackedScroll = 0;
-    boolean             isSelected = false;
-    List<ModuleDisplay> modules    = new ArrayList<>();
-    ModuleDisplay       selectedModule;
-    ModuleType          type;
-    double              scroll     = 0;
+    final  List<ModuleDisplay> modules       = new ArrayList<>();
+    public double              trackedScroll = 0;
+    boolean       isSelected = false;
+    ModuleDisplay selectedModule;
+    double        scroll     = 0;
 
     public CategoryDisplay(int x, int y, ModuleType category) {
         super(x, y, (int) CATEGORY_WIDTH, (int) CATEGORY_HEIGHT, category.getName(), () -> {
         });
-        this.type = category;
         modules.clear();
         int yOffset = 0;
         for (Module module : ModuleRegistry.getModules()) {
@@ -844,19 +842,20 @@ class CategoryDisplay extends ClearButton implements FastTickable {
         Renderer.R2D.fill(matrices, toUse, this.x, this.y, this.x + width, this.y + height);
         double centerY = this.y + this.height / 2d;
         int c = Themes.currentActiveTheme.fontColor().getRGB();
-        if (!getInstance().searchTerm.isEmpty()) {
+        if (!instance().searchTerm.isEmpty()) {
             int found = 0;
             for (ModuleDisplay module : getModules()) {
-                if (ModuleDisplay.nameMatches(module.text, getInstance().searchTerm)) {
+                if (ModuleDisplay.nameMatches(module.text, instance().searchTerm)) {
                     found++;
                 }
             }
             if (found == 0) {
                 c = 0x555555;
             }
-            FontRenderers.normal.drawString(matrices, found + "", this.x + this.width - FontRenderers.normal.getStringWidth(found + "") - 5, centerY - FontRenderers.normal.getFontHeight() / 2f, found == 0 ? c : 0xAAFFAA);
+            FontRenderers.getNormal().drawString(matrices, found + "", this.x + this.width - FontRenderers.getNormal().getStringWidth(found + "") - 5, centerY - FontRenderers.getNormal()
+                    .getFontHeight() / 2f, found == 0 ? c : 0xAAFFAA);
         }
-        FontRenderers.normal.drawString(matrices, text, this.x + 5, centerY - FontRenderers.normal.getFontHeight() / 2f, c);
+        FontRenderers.getNormal().drawString(matrices, text, this.x + 5, centerY - FontRenderers.getNormal().getFontHeight() / 2f, c);
         if (isSelected) {
             Renderer.R2D.fill(matrices, Themes.currentActiveTheme.center(), this.x + this.width, SOURCE_Y, this.x + this.width + MODULE_WIDTH, SOURCE_Y + MAX_HEIGHT);
         }

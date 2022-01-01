@@ -45,7 +45,7 @@ public class Notification {
      *
      * @param duration How long the notification will stay (special cases are described above
      * @param title    What the title of the notification is (irrelevant when topBar is set)
-     * @param topBar   Whether or not to show this notification at the top of the screen instead of the right
+     * @param topBar   Whether to show this notification at the top of the screen instead of the right
      * @param contents What the contents of the notification is
      * @return The newly created notification
      */
@@ -70,7 +70,7 @@ public class Notification {
         List<String> splitContent = new ArrayList<>();
         StringBuilder line = new StringBuilder();
         for (String c : split.split(" +")) {
-            if (FontRenderers.normal.getStringWidth(line + " " + c) >= 145) {
+            if (FontRenderers.getNormal().getStringWidth(line + " " + c) >= 145) {
                 splitContent.add(line.toString());
                 line = new StringBuilder();
             }

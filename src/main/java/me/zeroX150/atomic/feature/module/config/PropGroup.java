@@ -10,8 +10,8 @@ import java.util.List;
 
 public class PropGroup {
 
-    String                name;
-    List<DynamicValue<?>> children = new ArrayList<>();
+    final String                name;
+    final List<DynamicValue<?>> children = new ArrayList<>();
 
     public PropGroup(String name) {
         this.name = name;
@@ -21,16 +21,14 @@ public class PropGroup {
         return name;
     }
 
-    public PropGroup withChild(DynamicValue<?> c) {
+    public void addChild(DynamicValue<?> c) {
         children.add(c);
-        return this;
     }
 
-    public PropGroup addAll(DynamicValue<?>... children) {
+    public void addAll(DynamicValue<?>... children) {
         for (DynamicValue<?> child : children) {
-            withChild(child);
+            addChild(child);
         }
-        return this;
     }
 
     public List<DynamicValue<?>> getChildren() {

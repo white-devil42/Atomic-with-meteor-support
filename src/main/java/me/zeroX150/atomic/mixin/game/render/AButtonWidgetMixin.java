@@ -64,10 +64,10 @@ import java.awt.Color;
             dHeight = height;
         } else if (((Object) this) instanceof SliderWidget inst) {
             ISliderWidgetAccessor accessor = (ISliderWidgetAccessor) inst;
-            double prog = accessor.getValue();
+            double animProgress = accessor.getValue();
             dHeight = 20;
             dWidth = 4;
-            dxStart = (int) (x + (prog * (width - 4))); // wtf why
+            dxStart = (int) (x + (animProgress * (width - 4))); // wtf why
             dyStart = y;
         } else {
             return;
@@ -89,7 +89,8 @@ import java.awt.Color;
         }
         DrawableHelper.fill(matrices, x, y, x + width, y + height, this.active ? Renderer.Util.lerp(new Color(38, 83, 92, 100), unselectedColor, interpolatedAProg).getRGB() : disabledColor.getRGB());
         //CustomFont.INSTANCE.drawString(this.getMessage().getString(),this.x+this.width/2,this.y+(this.height-9)/2,0xFFFFFF);
-        FontRenderers.normal.drawCenteredString(matrices, this.getMessage().getString(), this.x + this.width / 2f, this.y + (this.height - FontRenderers.normal.getFontHeight()) / 2f, 0xFFFFFF);
+        FontRenderers.getNormal()
+                .drawCenteredString(matrices, this.getMessage().getString(), this.x + this.width / 2f, this.y + (this.height - FontRenderers.getNormal().getFontHeight()) / 2f, 0xFFFFFF);
     }
 
     double ease(double x) {

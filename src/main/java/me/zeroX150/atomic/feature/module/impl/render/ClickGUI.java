@@ -54,7 +54,7 @@ public class ClickGUI extends Module {
 
     @Override public void tick() {
         if (!(Atomic.client.currentScreen instanceof ClickGUIScreen)) {
-            Atomic.client.setScreen(ClickGUIScreen.getInstance());
+            Atomic.client.setScreen(ClickGUIScreen.instance());
         } else {
             toggle();
         }

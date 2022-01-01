@@ -12,7 +12,6 @@ import me.zeroX150.atomic.feature.command.Command;
 import me.zeroX150.atomic.helper.event.EventType;
 import me.zeroX150.atomic.helper.event.Events;
 import me.zeroX150.atomic.helper.event.events.PacketEvent;
-import me.zeroX150.atomic.helper.util.Utils;
 import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
 import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
 
@@ -43,7 +42,7 @@ public class Plugins extends Command {
                         }
                     }
                     if (plugins.isEmpty()) {
-                        Utils.Client.sendMessage("No plugins found");
+                        error("No plugins found");
                         return;
                     }
                     Iterator<String> iterator = plugins.iterator();
@@ -51,7 +50,7 @@ public class Plugins extends Command {
                     while (iterator.hasNext()) {
                         message.append(", ").append(iterator.next());
                     }
-                    Utils.Client.sendMessage(message.toString());
+                    message(message.toString());
                 }
 
             });

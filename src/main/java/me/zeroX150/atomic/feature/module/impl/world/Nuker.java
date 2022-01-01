@@ -32,18 +32,18 @@ import java.util.stream.Collectors;
 
 public class Nuker extends Module {
 
-    final List<BlockPos> renders       = new ArrayList<>();
-    final SliderValue    range         = (SliderValue) this.config.create("Range", 3, 0, 4, 1).description("The range to nuke by");
-    final SliderValue    blocksPerTick = (SliderValue) this.config.create("Blocks per tick", 1, 1, 20, 0).description("The amount of blocks to destroy per tick");
-    final SliderValue    delay         = (SliderValue) this.config.create("Delay", 5, 0, 20, 0).description("The delay before breaking blocks");
-    final BooleanValue   ignoreXray    = (BooleanValue) this.config.create("Ignore xray", true).description("Whether or not to ignore xray blocks");
-    final MultiValue     mode          = (MultiValue) this.config.create("Mode", "Everything", "Everything", "Torches", "Fire", "Wood").description("What to nuke");
-    final BooleanValue   autoTool      = (BooleanValue) this.config.create("Auto tool", true).description("Automatically picks the best tool from your inventory, for the block being broken");
-    final Block[]        WOOD          = new Block[]{Blocks.ACACIA_LOG, Blocks.BIRCH_LOG, Blocks.DARK_OAK_LOG, Blocks.JUNGLE_LOG, Blocks.OAK_LOG, Blocks.SPRUCE_LOG, Blocks.STRIPPED_ACACIA_LOG,
+    final List<BlockPos> renders           = new ArrayList<>();
+    final SliderValue    range             = (SliderValue) this.config.create("Range", 3, 0, 4, 1).description("The range to nuke by");
+    final SliderValue    blocksPerTick     = (SliderValue) this.config.create("Blocks per tick", 1, 1, 20, 0).description("The amount of blocks to destroy per tick");
+    final SliderValue    delay             = (SliderValue) this.config.create("Delay", 5, 0, 20, 0).description("The delay before breaking blocks");
+    final BooleanValue   ignoreXray        = (BooleanValue) this.config.create("Ignore xray", true).description("Whether or not to ignore xray blocks");
+    final MultiValue     mode              = (MultiValue) this.config.create("Mode", "Everything", "Everything", "Torches", "Fire", "Wood", "Grass").description("What to nuke");
+    final BooleanValue   autoTool          = (BooleanValue) this.config.create("Auto tool", true).description("Automatically picks the best tool from your inventory, for the block being broken");
+    final Block[]        WOOD              = new Block[]{Blocks.ACACIA_LOG, Blocks.BIRCH_LOG, Blocks.DARK_OAK_LOG, Blocks.JUNGLE_LOG, Blocks.OAK_LOG, Blocks.SPRUCE_LOG, Blocks.STRIPPED_ACACIA_LOG,
             Blocks.STRIPPED_BIRCH_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.STRIPPED_JUNGLE_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.STRIPPED_SPRUCE_LOG};
-    MultiValue   mv                = (MultiValue) this.config.create("Sort", "Out -> In", "Out -> In", "In -> Out", "Strength", "Random").description("How to sort");
-    BooleanValue ignoreUnbreakable = (BooleanValue) this.config.create("Ignore unbreakable", true).description("Ignore survival unbreakable blocks");
-    int          delayPassed       = 0;
+    final MultiValue     mv                = (MultiValue) this.config.create("Sort", "Out -> In", "Out -> In", "In -> Out", "Strength", "Random").description("How to sort");
+    final BooleanValue   ignoreUnbreakable = (BooleanValue) this.config.create("Ignore unbreakable", true).description("Ignore survival unbreakable blocks");
+    int delayPassed = 0;
 
     public Nuker() {
         super("Nuker", "breaking block", ModuleType.WORLD);
@@ -58,6 +58,8 @@ public class Nuker extends Module {
             return b == Blocks.FIRE || b == Blocks.SOUL_FIRE;
         } else if (mode.getValue().equalsIgnoreCase("wood")) {
             return Arrays.stream(WOOD).anyMatch(block -> block == b);
+        } else if (mode.getValue().equalsIgnoreCase("grass")) {
+            return b == Blocks.GRASS || b == Blocks.TALL_GRASS;
         }
         return false;
     }

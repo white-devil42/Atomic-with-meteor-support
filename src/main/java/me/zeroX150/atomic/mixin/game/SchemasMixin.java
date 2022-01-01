@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 // mixin to enable lazy dfu loading
-// mod that does this on its own and where i got the shit from
+// mod that does this on its own and where I got the shit from
 // https://github.com/astei/lazydfu
 @Mixin(Schemas.class) public class SchemasMixin {
 

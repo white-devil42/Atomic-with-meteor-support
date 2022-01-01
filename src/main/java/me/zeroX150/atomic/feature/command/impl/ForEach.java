@@ -23,19 +23,28 @@ public class ForEach extends Command {
         super("ForEach", "Do something for each player", "foreach", "for", "fe");
     }
 
+    @Override public String[] getSuggestions(String fullCommand, String[] args) {
+        if (args.length == 1) {
+            return new String[]{"(delay in ms)"};
+        } else if (args.length == 2) {
+            return new String[]{"(message)"};
+        }
+        return super.getSuggestions(fullCommand, args);
+    }
+
     @Override public void onExecute(String[] args) {
         if (args.length < 2) {
-            Utils.Client.sendMessage("Syntax: foreach (delayMS) (message)");
-            Utils.Client.sendMessage("%s in the message gets replaced with the player name");
-            Utils.Client.sendMessage("Example: .foreach 1000 /msg %s Hi %s! I think you're fucking retarded");
+            message("Syntax: foreach (delayMS) (message)");
+            message("%s in the message gets replaced with the player name");
+            message("Example: .foreach 1000 /msg %s Hi %s! I think you're fucking retarded");
             return;
         }
         int delay = Utils.Math.tryParseInt(args[0], -1);
         if (delay < 0) {
-            Utils.Client.sendMessage("I need a valid int above 0 please");
+            error("I need a valid int above 0 please");
             return;
         }
-        Utils.Client.sendMessage("Sending the message for every person in the player list, with " + delay + "ms delay");
+        message("Sending the message for every person in the player list, with " + delay + "ms delay");
         for (PlayerListEntry playerListEntry : Objects.requireNonNull(Atomic.client.getNetworkHandler()).getPlayerList()) {
             if (Utils.Players.isPlayerNameValid(playerListEntry.getProfile().getName()) && !playerListEntry.getProfile().getId().equals(Objects.requireNonNull(Atomic.client.player).getUuid())) {
                 runner.execute(() -> {

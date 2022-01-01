@@ -80,7 +80,7 @@ public class EntityFly extends Module {
     }
 
     @Override public void enable() {
-        Utils.Client.sendMessage("alt = down. dont use shift");
+        Utils.Logging.messageChat("Press lalt to go down");
     }
 
     @Override public void disable() {

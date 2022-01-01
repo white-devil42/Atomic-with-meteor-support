@@ -40,7 +40,7 @@ public class AimAssist extends Module {
     final BooleanValue attackPassive      = (BooleanValue) this.config.create("Aim at passive", true).description("Whether or not to aim at animals");
     final BooleanValue attackEverything   = (BooleanValue) this.config.create("Aim at everything", true).description("Aim at everything that does not apply to previous filters");
     final BooleanValue aimAtCombatPartner = (BooleanValue) this.config.create("Aim at combat", true).description("Whether or not to only aim at the combat partner (if in combat)");
-    final MultiValue   prio               = (MultiValue) this.config.create("Priority", "Distance", "Distance", "Health descending", "Health ascending")
+    final MultiValue   priority           = (MultiValue) this.config.create("Priority", "Distance", "Distance", "Health descending", "Health ascending")
             .description("What to prioritize when selecting an entity to aim at");
     final SliderValue  laziness           = (SliderValue) this.config.create("Laziness", 1, 0.1, 5, 1).description("How lazy to be when aiming (bigger = slower aim speed)");
     final BooleanValue aimInstant         = (BooleanValue) this.config.create("Aim instantly", false).description("Aims instantly, instead of smooth transitioning to the target");
@@ -56,7 +56,7 @@ public class AimAssist extends Module {
         attackEverything.showOnlyIf(() -> !aimAtCombatPartner.getValue());
         laziness.showOnlyIf(() -> !aimInstant.getValue());
         this.config.createPropGroup("Targets", attackEverything, attackHostile, attackPlayers, attackNeutral, attackPassive, aimAtCombatPartner, ignoreFriends);
-        this.config.createPropGroup("Aim config", prio, laziness, aimInstant);
+        this.config.createPropGroup("Aim config", priority, laziness, aimInstant);
     }
 
     @Override public void tick() {
@@ -117,13 +117,13 @@ public class AimAssist extends Module {
             le = null;
             return;
         }
-        if (prio.getValue().equalsIgnoreCase("distance")) {
+        if (priority.getValue().equalsIgnoreCase("distance")) {
             le = attacks.stream().sorted(Comparator.comparingDouble(value -> value.getPos().distanceTo(Objects.requireNonNull(Atomic.client.player).getPos()))).collect(Collectors.toList()).get(0);
         } else {
             // get entity with the least health if mode is ascending, else get most health
             le = attacks.stream().sorted(Comparator.comparingDouble(value -> {
                 if (value instanceof LivingEntity e) {
-                    return e.getHealth() * (prio.getValue().equalsIgnoreCase("health ascending") ? -1 : 1);
+                    return e.getHealth() * (priority.getValue().equalsIgnoreCase("health ascending") ? -1 : 1);
                 }
                 return Integer.MAX_VALUE; // not a living entity, discard
             })).collect(Collectors.toList()).get(0);
