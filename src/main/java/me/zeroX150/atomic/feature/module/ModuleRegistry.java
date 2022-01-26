@@ -31,7 +31,6 @@ import me.zeroX150.atomic.feature.module.impl.exploit.SoundLogger;
 import me.zeroX150.atomic.feature.module.impl.exploit.VanillaSpoof;
 import me.zeroX150.atomic.feature.module.impl.exploit.VerticalPhase;
 import me.zeroX150.atomic.feature.module.impl.fun.BHop;
-import me.zeroX150.atomic.feature.module.impl.fun.Deadmau5;
 import me.zeroX150.atomic.feature.module.impl.fun.NWordCounter;
 import me.zeroX150.atomic.feature.module.impl.fun.Physics;
 import me.zeroX150.atomic.feature.module.impl.fun.SpinAutism;
@@ -230,7 +229,6 @@ public class ModuleRegistry {
         modules.add(new Animations());
         modules.add(new AutoElytra());
         modules.add(new ArmorSwitch());
-        modules.add(new Deadmau5());
         modules.add(new Squake());
         modules.add(new OOBCrash());
         modules.add(new TabGUI());

@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
     }
 
     @Inject(method = "initWidgets", at = @At("HEAD")) void atomic_addAtomicButton(CallbackInfo ci) {
-        ButtonWidget bw = new ButtonWidget(this.width / 2 - 102, this.height / 4 + 144 - 16, 204, 20, Text.of("Atomic console"), button -> Atomic.client.setScreen(AtomicConsoleScreen.instance()));
+        ButtonWidget bw = new ButtonWidget(this.width / 2 - 102, this.height / 4 + 144 + 30, 20, 20, Text.of("AC"), button -> Atomic.client.setScreen(AtomicConsoleScreen.instance()));
         this.addDrawableChild(bw);
     }
 }
